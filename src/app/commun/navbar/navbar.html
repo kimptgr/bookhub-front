@@ -1,0 +1,48 @@
+<nav class="bg-white shadow-lg">
+    <div class="px-4">
+<!--    <div class="max-w-6xl mx-auto px-4">-->
+      <div class="flex justify-between">
+
+        <!-- Logo -->
+        <div class="flex items-center py-2">
+          <a href="/" class="text-xl font-bold text-gray-800">
+            <img src="/logo.jpg" alt="Logo" class="h-10">
+          </a>
+        </div>
+
+        <!-- Menu principal (desktop) -->
+        <div class="hidden md:flex items-center space-x-1">
+          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Catalogue</a>
+<!--          @if (estBibliothecaire) {-->
+<!--          TODO: Quand l'authentification sera faite -->
+            <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Ajouter un livre</a>
+<!--          }-->
+          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a>
+          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Réservations</a>
+          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300" title="Se déconnecter">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Bouton menu burger (mobile) -->
+        <div class="md:hidden flex items-center">
+          <button id="menu-toggle" class="outline-none mobile-menu-button" (click)="onMenuBurger()">
+            <svg class="w-6 h-6 text-gray-800" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu mobile (caché par défaut) -->
+    <div id="mobile-menu" class="hidden mobile-menu">
+      <ul class="md:hidden">
+        <li><a href="/" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Accueil</a></li>
+        <li><a href="/services" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Services</a></li>
+        <li><a href="/contact" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Contact</a></li>
+      </ul>
+    </div>
+  </nav>

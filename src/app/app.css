@@ -1,0 +1,4 @@
+.contenu-principal {
+  display: flex;
+  flex-grow: 1;
+}

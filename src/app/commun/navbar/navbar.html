@@ -13,7 +13,7 @@
         <!-- Menu principal (desktop) -->
         @if (estConnecte()) {
         <div class="hidden md:flex items-center space-x-1">
-          <a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Catalogue</a>
+          <a routerLink="/catalogue" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Catalogue</a>
           @if (roleUtilisateur() == 'BIBLIOTHECAIRE') {
 <!--          TODO: Quand l'authentification sera faite -->
             <a routerLink="livres/nouveau" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Ajouter un livre</a>

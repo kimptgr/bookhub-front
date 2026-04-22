@@ -1,0 +1,21 @@
+<form [formGroup]="livreForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 w-full sm:w-56">
+  <div class="flex flex-col gap-1">
+    <input pInputText type="text" id="title" placeholder="Titre" formControlName="title" [invalid]="isInvalid('title')" />
+    @if (isInvalid('title')) {
+      <p-message severity="error" size="small" variant="simple">Titre obligatoire</p-message>
+    }
+  </div>
+  <div class="flex flex-col gap-1">
+    <input pInputText type="isbn" id="isbn" placeholder="ISBN" formControlName="isbn" [invalid]="isInvalid('isbn')" />
+    @if (isInvalid('email')) {
+      @if (livreForm.get('email')?.errors?.['required']) {
+        <p-message severity="error" size="small" variant="simple">Email is required.</p-message>
+      }
+      @if (livreForm.get('email')?.errors?.['email']) {
+        <p-message severity="error" size="small" variant="simple">Please enter a valid email.</p-message>
+      }
+    }
+  </div>
+
+  <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+</form>

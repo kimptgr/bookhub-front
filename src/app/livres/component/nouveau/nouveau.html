@@ -3,28 +3,51 @@
     <legend>Ajouter un livre</legend>
   </fieldset>
   <div class="flex flex-col gap-1">
-    <label for="title">Titre du livre</label>
-    <input pInputText type="text" id="title" placeholder="Titre" formControlName="title" [invalid]="isInvalid('title')" />
-    @if (isInvalid('title')) {
-      <p-message severity="error" size="small" variant="simple">Titre obligatoire</p-message>
-    }
+    <p-floatlabel variant="on">
+      <input
+        pInputText
+        type="text"
+        id="titre"
+        formControlName="titre"
+        [invalid]="isInvalid('titre')"
+      />
+      <label for="titre">Titre</label>
+    </p-floatlabel>
+
+  @if (isInvalid('titre')) {
+    <p-message severity="error" size="small" variant="simple">
+      Titre obligatoire
+    </p-message>
+  }
   </div>
 
-  <div>Ajout auteur·ice</div>
+  <div>Ajout auteur·rice</div>
   <div formArrayName="auteurs">
     @for (auteur of auteurs.controls; track auteur; let i = $index) {
       <div [formGroupName]="i">
         <div class="flex flex-col gap-1">
-          <label for="nomAuteur">Nom</label>
-          <input pInputText type="text" name="nomAuteur" id="nomAuteur" placeholder="Nom" formControlName="nomAuteur">
+          <label [for]="'nomAuteur-' + i">Nom</label>
+          <input
+            [id]="'nomAuteur-' + i"
+            pInputText
+            formControlName="nomAuteur"
+            [invalid]="auteur.get('nomAuteur')?.invalid && (auteur.get('nomAuteur')?.touched || auteur.get('nomAuteur')?.dirty)"
+          />
+          @if (auteur.get('nomAuteur')?.invalid && (auteur.get('nomAuteur')?.touched || auteur.get('nomAuteur')?.dirty)) {
+            <p-message severity="error" size="small" variant="simple">
+              Nom obligatoire
+            </p-message>
+          }
         </div>
         <div class="flex flex-col gap-1">
           <label for="prenomAuteur">Prénom</label>
           <input pInputText type="text" name="prenomAuteur" id="prenomAuteur" placeholder="Prénom" formControlName="prenomAuteur">
         </div>
+        @if (auteurs.controls.length > 1) {
         <p-button class="my-2" type="button" (click)="removeAuteur(i)">
           Supprimer
         </p-button>
+        }
       </div>
     }
     <p-button
@@ -35,25 +58,108 @@
 
   </div>
   <div>
-    <p-select formControlName="genres" id="genre" name="genre" placeholder="Selectionner un genre" class="w-full">
-      @for (genre of genres$ | async; track genre) {
-      <option [value]="genre.id">{{ genre.libelle }}</option>
-      }
-    </p-select>
-  </div>
-
-  <div class="flex flex-col gap-1">
-    <input pInputText type="isbn" id="isbn" placeholder="ISBN" formControlName="isbn" [invalid]="isInvalid('isbn')" />
-    @if (isInvalid('email')) {
-      @if (livreForm.get('email')?.errors?.['required']) {
-        <p-message severity="error" size="small" variant="simple">Email is required.</p-message>
-      }
-      @if (livreForm.get('email')?.errors?.['email']) {
-        <p-message severity="error" size="small" variant="simple">Please enter a valid email.</p-message>
-      }
+    <p-multiselect
+      formControlName="genres"
+      [options]="(genres$ | async) ?? []"
+      optionLabel="libelle"
+      optionValue="id"
+      placeholder="Selectionner un genre" class="w-full">
+    </p-multiselect>
+    @if (isInvalid('genres')) {
+      <p-message severity="error" size="small" variant="simple">
+        Au moins un genre obligatoire
+      </p-message>
     }
   </div>
 
-  <p-button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></p-button>
+  <div class="flex flex-col gap-1">
+    <label for="isbn">ISBN</label>
+    <input pInputText type="text" id="isbn" placeholder="ISBN" formControlName="isbn" [invalid]="isInvalid('isbn')" />
+    @if (isInvalid('isbn') && isbn.errors?.['required']) {
+      <p-message severity="error" size="small" variant="simple">
+        ISBN obligatoire
+      </p-message>
+    } @else if (isInvalid('isbn')) {
+      <p-message severity="error" size="small" variant="simple">
+        ISBN invalide
+      </p-message>
+    }
+  </div>
+
+  <div>
+    <p-select
+      formControlName="idEtat"
+      [options]="(etats$ | async) ?? []"
+      optionLabel="libelle"
+      optionValue="id"
+      placeholder="Selectionner un état" class="w-full">
+    </p-select>
+    @if (isInvalid('idEtat')) {
+      <p-message severity="error" size="small" variant="simple">
+        Au moins un état obligatoire
+      </p-message>
+    }
+  </div>
+  <div class="flex flex-col gap-1">
+    <label for="synopsis">Synopsis</label>
+    <input
+      pInputText
+      type="date"
+      id="synopsis"
+      formControlName="synopsis"
+      [invalid]="isInvalid('synopsis')"
+    />
+
+    @if (isInvalid('synopsis')) {
+      <p-message severity="error" size="small" variant="simple">
+        Synopsis trop tong.
+      </p-message>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="urlImage">Url de l'image</label>
+    <input
+      pInputText
+      type="text"
+      id="urlImage"
+      formControlName="urlImage"
+      [invalid]="isInvalid('urlImage')"
+    />
+
+    @if (isInvalid('urlImage')) {
+      <p-message severity="error" size="small" variant="simple">
+        Url Invalide
+      </p-message>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="dateDeParution">Date de parution</label>
+    <p-datepicker
+      dateFormat="dd/mm/yy"
+      placeholder="jj/mm/aaaa"
+      pInputMask="99/99/9999"
+      id="dateDeParution"
+      formControlName="dateDeParution"
+      [invalid]="isInvalid('dateDeParution')"
+      [showIcon]="true"
+    ></p-datepicker>
+
+    @if (isInvalid('dateDeParution')) {
+      <p-message severity="error" size="small" variant="simple">
+        Date invalide
+      </p-message>
+    }
+  </div>
+
+
+  <p-button
+    type="submit"
+    severity="secondary"
+  >
+    Enregistrer
+  </p-button>
+
 </form>
 

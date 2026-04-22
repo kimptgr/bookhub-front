@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
 import {InputText} from 'primeng/inputtext';
 import {Message} from 'primeng/message';
 import {GenreService} from '../../../genre/genre-service';
@@ -10,6 +10,10 @@ import {EtatService} from '../../../etat/etat-service';
 import {Button} from 'primeng/button';
 import {AsyncPipe} from '@angular/common';
 import {Select} from 'primeng/select';
+import {MultiSelect} from 'primeng/multiselect';
+import {DatePicker} from 'primeng/datepicker';
+import {FloatLabel} from 'primeng/floatlabel';
+import {isbnValidator} from './isbn.directive';
 
 @Component({
   selector: 'app-nouveau',
@@ -20,49 +24,68 @@ import {Select} from 'primeng/select';
     AsyncPipe,
     Button,
     AsyncPipe,
-    Select
+    MultiSelect,
+    Select,
+    DatePicker,
+    FloatLabel
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',
 })
-export class Nouveau {
-  livreForm: FormGroup;
-  genres$: Observable<Genre[]>;
-  etats$: Observable<Etat[]>;
+export class Nouveau implements OnInit{
+  livreForm!: FormGroup;
+  auteurForm!: FormGroup;
+  genres$!: Observable<Genre[]>;
+  etats$!: Observable<Etat[]>;
 
-  constructor(private formBuilder: FormBuilder, private genreService: GenreService, private etatService: EtatService) {
+  constructor(private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService) {
+  }
+
+  ngOnInit() {
     this.genres$ = this.genreService.getGenres();
     this.etats$ = this.etatService.getEtats();
-    this.livreForm = this.formBuilder.group({
-      title: ['', Validators.required],
-      isbn: ['', [Validators.required, Validators.min(10)]],
-      auteurs: this.formBuilder.array([], Validators.required),
-      genres: [[''], Validators.required]
+    this.auteurForm = this.fb.group({
+      nomAuteur: ['', Validators.required],
+      prenomAuteur: [''],
     })
-  this.addAuteur();
+    this.livreForm = this.fb.nonNullable.group({
+      titre: ['', Validators.required],
+      isbn: ['', [Validators.required, isbnValidator()]],
+      auteurs: this.fb.array([this.createAuteurForm()], Validators.minLength(1)),
+      genres: [[], Validators.required],
+      idEtat: [1, [Validators.required]],
+      synopsis: [''],
+      urlImage: ['', Validators.pattern('https?://.+')],
+      dateDeParution: [''],
+    })
   }
 
-  isInvalid(label: string) {
-    if (label === 'title') {
-        return this.livreForm.get(label)?.invalid
-      }
-    if (label === 'isbn') {
-      let isbn = this.livreForm.get(label)?.value;
 
-      if (!isbn) return false;
-
-      isbn = isbn.replace('_', '').trim();
-        return isbn.match("\d{10}|\d{13}|\d{9}X");
-      }
-    return this.livreForm.get(label)?.invalid && this.livreForm.get(label)?.touched
+  isInvalid(controlName: string): boolean {
+    const control = this.livreForm.get(controlName);
+    return !!(control &&
+      control.invalid &&
+      (control.touched || control.dirty));
   }
+
 
   get auteurs() {
     return this.livreForm.get('auteurs') as FormArray;
   }
 
+  get isbn() {
+    return this.livreForm.get('isbn') as FormArray;
+  }
+
+  createAuteurForm() {
+    return this.fb.group({
+      nomAuteur: ['', Validators.required],
+      prenomAuteur: [''],
+    })
+  }
+
   addAuteur() {
-  const auteurForm = this.formBuilder.group({
+  const auteurForm = this.fb.group({
     nomAuteur: ['', Validators.required],
     prenomAuteur: [''],
   })
@@ -74,7 +97,9 @@ export class Nouveau {
   }
 
   onSubmit() {
-    console.log(this.livreForm.value);
+    this.livreForm.markAllAsTouched();
+    if (!this.livreForm.invalid) {
+      console.log(this.livreForm.value);
+    }
   }
-
 }

@@ -8,8 +8,8 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class EtatService {
-  private readonly BASE_URL = environment.base_url;
-  // private readonly BASE_URL = 'http://localhost:8080/bookhub-club/api';
+  //private readonly BASE_URL = environment.base_url;
+   private readonly BASE_URL = 'http://localhost:8080/bookhub-club/api';
 
   constructor(private http:HttpClient) {
   }

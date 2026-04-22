@@ -1,10 +1,47 @@
 <form [formGroup]="livreForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 w-full sm:w-56">
+  <fieldset>
+    <legend>Ajouter un livre</legend>
+  </fieldset>
   <div class="flex flex-col gap-1">
+    <label for="title">Titre du livre</label>
     <input pInputText type="text" id="title" placeholder="Titre" formControlName="title" [invalid]="isInvalid('title')" />
     @if (isInvalid('title')) {
       <p-message severity="error" size="small" variant="simple">Titre obligatoire</p-message>
     }
   </div>
+
+  <div>Ajout auteur·ice</div>
+  <div formArrayName="auteurs">
+    @for (auteur of auteurs.controls; track auteur; let i = $index) {
+      <div [formGroupName]="i">
+        <div class="flex flex-col gap-1">
+          <label for="nomAuteur">Nom</label>
+          <input pInputText type="text" name="nomAuteur" id="nomAuteur" placeholder="Nom" formControlName="nomAuteur">
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="prenomAuteur">Prénom</label>
+          <input pInputText type="text" name="prenomAuteur" id="prenomAuteur" placeholder="Prénom" formControlName="prenomAuteur">
+        </div>
+        <p-button class="my-2" type="button" (click)="removeAuteur(i)">
+          Supprimer
+        </p-button>
+      </div>
+    }
+    <p-button
+      type="button"
+      (click)="addAuteur()">
+      Ajouter une autre personne
+    </p-button>
+
+  </div>
+  <div>
+    <p-select formControlName="genres" id="genre" name="genre" placeholder="Selectionner un genre" class="w-full">
+      @for (genre of genres$ | async; track genre) {
+      <option [value]="genre.id">{{ genre.libelle }}</option>
+      }
+    </p-select>
+  </div>
+
   <div class="flex flex-col gap-1">
     <input pInputText type="isbn" id="isbn" placeholder="ISBN" formControlName="isbn" [invalid]="isInvalid('isbn')" />
     @if (isInvalid('email')) {
@@ -17,5 +54,6 @@
     }
   </div>
 
-  <button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></button>
+  <p-button pButton severity="secondary" type="submit"><span pButtonLabel>Submit</span></p-button>
 </form>
+

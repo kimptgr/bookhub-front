@@ -1,0 +1,121 @@
+<!-- inscription.component.html -->
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg flex flex-col gap-5">
+
+    <fieldset class="border-b pb-4">
+      <legend class="text-xl font-semibold text-gray-800">
+        📝 Inscription
+      </legend>
+    </fieldset>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+
+      <!-- Nom + Prénom -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-1">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="nom"
+              formControlName="nom"
+              class="w-full"
+              [invalid]="form.get('nom')?.invalid && form.get('nom')?.touched"
+            />
+            <label for="nom">Nom</label>
+          </p-floatlabel>
+
+          @if (form.get('nom')?.invalid && form.get('nom')?.touched) {
+            <p-message severity="error" size="small" variant="simple">
+              Nom obligatoire
+            </p-message>
+          }
+        </div>
+
+        <div>
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="prenom"
+              formControlName="prenom"
+              class="w-full"
+            />
+            <label for="prenom">Prénom</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="flex flex-col gap-1">
+        <p-floatlabel variant="on">
+          <input
+            pInputText
+            id="email"
+            type="email"
+            formControlName="email"
+            class="w-full"
+            [invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+          />
+          <label for="email">Email</label>
+        </p-floatlabel>
+
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <p-message severity="error" size="small" variant="simple">
+            Email invalide
+          </p-message>
+        }
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="flex flex-col gap-1">
+        <p-floatlabel variant="on">
+          <p-password
+            id="password"
+            formControlName="password"
+            [toggleMask]="true"
+            class="w-full"
+            inputStyleClass="w-full"
+            [invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+            promptLabel="Entrez un mot de passe"
+            weakLabel="Faible"
+            mediumLabel="Moyen"
+            strongLabel="Fort"
+          />
+          <label for="password">Mot de passe</label>
+        </p-floatlabel>
+
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <p-message severity="warn" size="small" variant="simple">
+            12 caractères min, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
+          </p-message>
+        }
+      </div>
+
+      <!-- Erreur globale -->
+      @if (erreur) {
+        <p-message severity="error" size="small" variant="simple">
+          {{ erreur }}
+        </p-message>
+      }
+
+      <!-- Actions -->
+      <div class="flex flex-col gap-3 pt-4 border-t">
+        <p-button
+          type="submit"
+          severity="primary"
+          styleClass="w-full"
+          [disabled]="form.invalid"
+        >
+          S'inscrire
+        </p-button>
+
+        <p class="text-center text-sm text-gray-500">
+          Déjà un compte ?
+          <a routerLink="/connexion" class="text-blue-600 hover:underline">
+            Se connecter
+          </a>
+        </p>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,6 +1,5 @@
 import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 
-/** An actor's name can't match the given regular expression */
 export function isbnValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const forbidden = control.value.replaceAll("-", "");

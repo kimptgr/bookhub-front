@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {Genre} from '../models/genre';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GenreService {
-  private readonly BASE_URL = 'http://localhost:8080/bookhub-club/api';
+  private readonly BASE_URL = environment.base_url;
 
   constructor(private http:HttpClient) {
   }

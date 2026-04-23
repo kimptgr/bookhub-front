@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Livre} from '../../models/livre';
 import {catchError, map, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment'
+import {LivreView} from '../../models/livreView';
 
 @Injectable({
   providedIn: 'root',
@@ -23,5 +24,9 @@ export class LivreService {
         return throwError(() => error);
       })
     );
+  }
+
+  getById(id: string | null) {
+    return this.http.get<LivreView>(`${this.BASE_URL}/books/${id}`);
   }
 }

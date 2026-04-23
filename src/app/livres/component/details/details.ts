@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {LivreView} from '../../../models/livreView';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LivreService} from '../livre-service';
-import {Observable} from 'rxjs';
+import {catchError, Observable, throwError} from 'rxjs';
 import {AsyncPipe, DatePipe} from '@angular/common';
 import {Card} from 'primeng/card';
 import {Tag} from 'primeng/tag';
@@ -30,7 +30,14 @@ export class Details {
 
 constructor(private route: ActivatedRoute, private livreService: LivreService, private reservationService: ReservationService, private messageService: MessageService, private router: Router) {
   this.idLivre = this.route.snapshot.paramMap.get('id') ?? "0";
-  this.livre$ = this.livreService.getById(this.idLivre);
+  this.livre$ = this.livreService.getById(this.idLivre).pipe(
+    catchError(error => {
+      if (error.status) {
+        this.router.navigate(['/catalogue']);
+      }
+      return throwError(() => error)
+    })
+  );
   }
 
   onReservation() {

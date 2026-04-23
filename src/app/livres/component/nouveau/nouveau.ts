@@ -8,7 +8,7 @@ import {Observable} from 'rxjs';
 import {Etat} from '../../../models/etat';
 import {EtatService} from '../../../etat/etat-service';
 import {Button} from 'primeng/button';
-import {AsyncPipe} from '@angular/common';
+import {AsyncPipe, DatePipe} from '@angular/common';
 import {Select} from 'primeng/select';
 import {MultiSelect} from 'primeng/multiselect';
 import {DatePicker} from 'primeng/datepicker';
@@ -16,8 +16,9 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {isbnValidator} from './isbn.directive';
 import {LivreService} from '../livre-service';
 import {Textarea} from 'primeng/textarea';
-import {Toast} from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';
+import {Image} from 'primeng/image';
 
 @Component({
   selector: 'app-nouveau',
@@ -33,7 +34,7 @@ import { MessageService } from 'primeng/api';
     DatePicker,
     FloatLabel,
     Textarea,
-    Toast
+    Image,
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',
@@ -44,7 +45,7 @@ export class Nouveau implements OnInit{
   genres$!: Observable<Genre[]>;
   etats$!: Observable<Etat[]>;
 
-  constructor(private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService, private livreService: LivreService, private messageService: MessageService) {
+  constructor(private datePipe: DatePipe, private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService, private livreService: LivreService, private messageService: MessageService, private openlibrairyService: OpenlibrairyService) {
   }
 
   ngOnInit() {
@@ -83,6 +84,10 @@ export class Nouveau implements OnInit{
     return this.livreForm.get('isbn') as FormArray;
   }
 
+  get urlImage() {
+    return this.livreForm.get('urlImage') as FormArray;
+  }
+
   createAuteurForm() {
     return this.fb.group({
       nomAuteur: ['', Validators.required],
@@ -105,7 +110,16 @@ export class Nouveau implements OnInit{
   onSubmit() {
     this.livreForm.markAllAsTouched();
     if (!this.livreForm.invalid) {
-      this.livreService.postLivre(this.livreForm.value)
+      const raw = this.livreForm.getRawValue();
+      const payload = {
+        ...raw,
+        dateDeParution:
+          this.datePipe.transform(
+            raw.dateDeParution,
+            'dd/MM/yyyy'
+          )
+      }
+      this.livreService.postLivre(payload)
         .subscribe({
         next:() => {
           this.messageService.add({severity: 'success', summary: 'Livre ajouté', detail: 'Livre ajouté avec succès'})
@@ -128,5 +142,26 @@ export class Nouveau implements OnInit{
     this.auteurs.clear();
     this.addAuteur()
     this.livreForm.reset();
+  }
+
+  protected prechargerInformations() {
+    if (this.isbn.value.length === 0 || this.isbn.invalid) {
+      this.messageService.add({severity: 'info', summary: 'Erreur', detail: 'Veuillez renseigner un ISBN valide'})
+      return;
+    }
+
+    this.openlibrairyService.getLivrePartiel(this.livreForm.get("isbn")?.value).subscribe(
+      livre => {
+        this.livreForm.patchValue({
+          titre: livre.titre,
+          auteurs: livre.auteur,
+          urlImage: livre.urlImage,
+          dateDeParution: new Date(livre.annee,0),
+        })
+      },
+      error => {
+        this.messageService.add({severity: 'error', summary: 'Erreur', detail: error})
+      }
+    )
   }
 }

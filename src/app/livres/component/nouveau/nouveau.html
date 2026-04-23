@@ -117,7 +117,7 @@
     }
   </div>
 
-  <!-- ISBN + Etat -->
+  <!-- ISBN + URL -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1">
       <p-floatlabel variant="on">
@@ -158,6 +158,23 @@
         </p-message>
       }
     </div>
+
+<!--  Précharger le livre -->
+    <div class="flex center gap-3 border-t">
+      <p-button severity="primary" (click)="prechargerInformations()">
+        Préremplir
+      </p-button>
+    </div>
+    @if (urlImage.value.length > 5) {
+      <div class="flex flex-col justify-end gap-3 border-t">
+        <p-image
+          [src]="urlImage.value"
+          alt="Preview"
+          width="100"
+          [preview]="true"
+        ></p-image>
+      </div>
+    }
   </div>
   <!-- Synopsis -->
   <div class="flex flex-col gap-1">
@@ -180,7 +197,7 @@
     }
   </div>
 
-  <!-- Image + Date -->
+  <!-- Date + Etat-->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1">
       <label class="text-sm text-gray-600">Date de parution</label>

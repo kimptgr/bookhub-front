@@ -39,9 +39,9 @@ export class OpenlibrairyService {
       return author_name.map(auteur =>
         { let auteurArray = auteur.split(' ');
           if (auteurArray.length > 1) {
-            return {prenomAuteur: auteurArray.shift()?? '', nomAuteur: auteurArray.join(' ') }
+            return {prenom: auteurArray.shift()?? '', nom: auteurArray.join(' ') }
           }
-          return {nomAuteur: auteur?? '', prenomAuteur: ''}});
+          return {nom: auteur?? '', prenom: ''}});
     }
     return [];
   }

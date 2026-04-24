@@ -10,6 +10,7 @@
       <!-- Image -->
       <img
         [src]="l?.urlImage"
+        onerror="this.src='https://picsum.photos/200'"
         [alt]="l?.titre"
         class="w-40 h-auto rounded-xl shadow-md object-cover"
       />

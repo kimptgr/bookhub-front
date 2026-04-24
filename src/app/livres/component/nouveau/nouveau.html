@@ -160,15 +160,15 @@
     </div>
 
 <!--  Précharger le livre -->
-    <div class="flex center gap-3">
-      <p-button severity="primary" (click)="prechargerInformations()">
-        Préremplir
-      </p-button>
-    </div>
-    @if (isLoading) {
-      <p-progressSpinner ariaLabel="loading" />
-    }
-    @else {
+<!--    <div class="flex center gap-3">-->
+<!--      <p-button severity="primary" (click)="prechargerInformations()">-->
+<!--        Préremplir-->
+<!--      </p-button>-->
+<!--    </div>-->
+<!--    @if (isLoading) {-->
+<!--      <p-progressSpinner ariaLabel="loading" />-->
+<!--    }-->
+<!--    @else {-->
 
     @if (urlImage.value.length > 5) {
       <div class="flex flex-col justify-end gap-3">
@@ -180,7 +180,7 @@
         ></p-image>
       </div>
     }
-    }
+<!--    }-->
   </div>
   <!-- Synopsis -->
   <div class="flex flex-col gap-1">

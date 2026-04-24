@@ -5,26 +5,33 @@
 
         <!-- Logo -->
         <div class="flex items-center py-2">
-          <a href="/" class="text-xl font-bold text-gray-800">
+          <a routerLink="/" class="text-xl font-bold text-gray-800">
             <img src="/logo.jpg" alt="Logo" class="h-10">
           </a>
         </div>
 
         <!-- Menu principal (desktop) -->
+        @if (estConnecte()) {
         <div class="hidden md:flex items-center space-x-1">
-          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Catalogue</a>
+          <a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Catalogue</a>
 <!--          @if (estBibliothecaire) {-->
 <!--          TODO: Quand l'authentification sera faite -->
             <a routerLink="livres/nouveau" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Ajouter un livre</a>
 <!--          }-->
-          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a>
-          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Réservations</a>
-          <a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300" title="Se déconnecter">
+          <a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a>
+          <a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Réservations</a>
+          <a routerLink="/connexion" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300" (click)="deconnexion()" title="Se déconnecter">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1 0 12.728 0M12 3v9" />
             </svg>
           </a>
         </div>
+        } @else {
+          <div class="hidden md:flex items-center space-x-1">
+          <a routerLink="/connexion" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Se connecter</a>
+          <a routerLink="/inscription" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">S'inscrire</a>
+          </div>
+        }
 
         <!-- Bouton menu burger (mobile) -->
         <div class="md:hidden flex items-center">
@@ -38,11 +45,24 @@
     </div>
 
     <!-- Menu mobile (caché par défaut) -->
+  @if (estConnecte()) {
     <div id="mobile-menu" class="hidden mobile-menu">
       <ul class="md:hidden">
-        <li><a href="/" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Accueil</a></li>
-        <li><a routerLink="livres/nouveau" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Ajouter livre</a></li>
-        <li><a href="/contact" class="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">Contact</a></li>
+        <li><a href="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Catalogue</a></li>
+<!--   @if (estBibliothecaire) { -->
+        <li><a routerLink="livres/nouveau" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Ajouter un livre</a></li>
+<!--  }   -->
+        <li><a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a></li>
+        <li><a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Réservations</a></li>
+        <li><a routerLink="/connexion" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300" title="Se déconnecter">Se déconnecter</a></li>
       </ul>
     </div>
+  } @else {
+    <div id="mobile-menu" class="hidden mobile-menu">
+      <ul class="md:hidden">
+        <li><a routerLink="/connexion" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Se connecter</a></li>
+        <li><a routerLink="/inscription" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">S'inscrire</a></li>
+      </ul>
+    </div>
+  }
   </nav>

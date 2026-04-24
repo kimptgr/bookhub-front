@@ -167,6 +167,7 @@ export class Nouveau implements OnInit{
         this.isLoading = false
       },
       error => {
+        this.isLoading = false
         this.messageService.add({severity: 'error', summary: 'Erreur', detail: error})
       }
     )

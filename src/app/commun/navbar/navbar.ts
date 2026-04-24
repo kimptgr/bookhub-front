@@ -1,6 +1,15 @@
 import {Component} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {AuthService} from '../../services/authService';
+import { UtilisateurService } from '../../services/utilisateurService';
+
+/*
+différents rôles
+        UTILISATEUR
+        BIBLIOTHECAIRE
+        ADMINISTRATEUR
+ */
+
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +21,7 @@ import {AuthService} from '../../services/authService';
 })
 export class Navbar {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private utilisateurService: UtilisateurService) {}
 
   onMenuBurger(): void {
     const menu = document.querySelector('.mobile-menu');
@@ -25,6 +34,10 @@ export class Navbar {
 
   deconnexion(): void {
     this.authService.deconnexion();
+  }
+
+  roleUtilisateur() : string|null {
+    return this.utilisateurService.getRole();
   }
 
 }

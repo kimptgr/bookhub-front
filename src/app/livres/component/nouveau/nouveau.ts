@@ -8,7 +8,7 @@ import {Observable} from 'rxjs';
 import {Etat} from '../../../models/etat';
 import {EtatService} from '../../../etat/etat-service';
 import {Button} from 'primeng/button';
-import {AsyncPipe} from '@angular/common';
+import {AsyncPipe, DatePipe} from '@angular/common';
 import {Select} from 'primeng/select';
 import {MultiSelect} from 'primeng/multiselect';
 import {DatePicker} from 'primeng/datepicker';
@@ -17,6 +17,9 @@ import {isbnValidator} from './isbn.directive';
 import {LivreService} from '../livre-service';
 import {Textarea} from 'primeng/textarea';
 import {MessageService} from 'primeng/api';
+import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';
+import {Image} from 'primeng/image';
+import {ProgressSpinner} from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-nouveau',
@@ -31,7 +34,9 @@ import {MessageService} from 'primeng/api';
     Select,
     DatePicker,
     FloatLabel,
-    Textarea
+    Textarea,
+    Image,
+    ProgressSpinner
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',
@@ -41,16 +46,17 @@ export class Nouveau implements OnInit{
   auteurForm!: FormGroup;
   genres$!: Observable<Genre[]>;
   etats$!: Observable<Etat[]>;
+  isLoading: boolean = false;
 
-  constructor(private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService, private livreService: LivreService, private messageService: MessageService) {
+  constructor(private datePipe: DatePipe, private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService, private livreService: LivreService, private messageService: MessageService, private openlibrairyService: OpenlibrairyService) {
   }
 
   ngOnInit() {
     this.genres$ = this.genreService.getGenres();
     this.etats$ = this.etatService.getEtats();
     this.auteurForm = this.fb.group({
-      nomAuteur: ['', Validators.required],
-      prenomAuteur: [''],
+      nom: ['', Validators.required],
+      prenom: [''],
     })
     this.livreForm = this.fb.nonNullable.group({
       titre: ['', Validators.required],
@@ -81,17 +87,21 @@ export class Nouveau implements OnInit{
     return this.livreForm.get('isbn') as FormArray;
   }
 
+  get urlImage() {
+    return this.livreForm.get('urlImage') as FormArray;
+  }
+
   createAuteurForm() {
     return this.fb.group({
-      nomAuteur: ['', Validators.required],
-      prenomAuteur: [''],
+      nom: ['', Validators.required],
+      prenom: [''],
     })
   }
 
   addAuteur() {
   const auteurForm = this.fb.group({
-    nomAuteur: ['', Validators.required],
-    prenomAuteur: [''],
+    nom: ['', Validators.required],
+    prenom: [''],
   })
     this.auteurs.push(auteurForm);
   }
@@ -101,9 +111,20 @@ export class Nouveau implements OnInit{
   }
 
   onSubmit() {
+    this.formatIsbn();
+
     this.livreForm.markAllAsTouched();
     if (!this.livreForm.invalid) {
-      this.livreService.postLivre(this.livreForm.value)
+      const raw = this.livreForm.getRawValue();
+      const payload = {
+        ...raw,
+        dateDeParution:
+          this.datePipe.transform(
+            raw.dateDeParution,
+            'dd/MM/yyyy'
+          )
+      }
+      this.livreService.postLivre(payload)
         .subscribe({
         next:() => {
           this.messageService.add({severity: 'success', summary: 'Livre ajouté', detail: 'Livre ajouté avec succès'})
@@ -126,5 +147,44 @@ export class Nouveau implements OnInit{
     this.auteurs.clear();
     this.addAuteur()
     this.livreForm.reset();
+  }
+
+  protected prechargerInformations() {
+    this.formatIsbn();
+
+    if (this.isbn.value.length === 0 || this.isbn.invalid) {
+      this.messageService.add({severity: 'info', summary: 'Erreur', detail: 'Veuillez renseigner un ISBN valide'})
+      return;
+    }
+
+    this.isLoading = true;
+    this.openlibrairyService.getLivrePartiel(this.livreForm.get("isbn")?.value).subscribe(
+      livre => {
+
+        this.livreForm.patchValue({
+          titre: livre.titre,
+          auteurs: livre.auteur,
+          urlImage: livre.urlImage,
+          dateDeParution: new Date(livre.annee,0),
+        });
+
+        this.isLoading = false;
+      },
+      error => {
+        this.isLoading = false;
+        this.messageService.add({severity: 'error', summary: 'Erreur', detail: error});
+      }
+    )
+  }
+
+  /**
+   * Fonction pour supprimer les espaces et les tirets
+   */
+  private formatIsbn(): void {
+    const control = this.livreForm.get('isbn');
+
+    if (control) {
+      control.patchValue(control.value.replaceAll(/[\s-]/g, ''));
+    }
   }
 }

@@ -47,14 +47,14 @@
                 <input
                   [id]="'nomAuteur-' + i"
                   pInputText
-                  formControlName="nomAuteur"
+                  formControlName="nom"
                   class="w-full"
-                  [invalid]="auteur.get('nomAuteur')?.invalid && (auteur.get('nomAuteur')?.touched || auteur.get('nomAuteur')?.dirty)"
+                  [invalid]="auteur.get('nom')?.invalid && (auteur.get('nom')?.touched || auteur.get('nom')?.dirty)"
                 />
                 <label [for]="'nomAuteur-' + i">Nom</label>
               </p-floatlabel>
 
-              @if (auteur.get('nomAuteur')?.invalid && (auteur.get('nomAuteur')?.touched || auteur.get('nomAuteur')?.dirty)) {
+              @if (auteur.get('nom')?.invalid && (auteur.get('nom')?.touched || auteur.get('nom')?.dirty)) {
                 <p-message severity="error" size="small" variant="simple">
                   Nom obligatoire
                 </p-message>
@@ -67,7 +67,7 @@
                 <input
                   pInputText
                   type="text"
-                  formControlName="prenomAuteur"
+                  formControlName="prenom"
                   class="w-full"
                 />
                 <label>Prénom</label>
@@ -117,7 +117,7 @@
     }
   </div>
 
-  <!-- ISBN + Etat -->
+  <!-- ISBN + URL -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1">
       <p-floatlabel variant="on">
@@ -158,6 +158,29 @@
         </p-message>
       }
     </div>
+
+<!-- Précharger le livre -->
+    <div class="flex center gap-3">
+      <p-button severity="primary" (click)="prechargerInformations()">
+        Préremplir
+      </p-button>
+    </div>
+    @if (isLoading) {
+      <p-progressSpinner ariaLabel="loading" />
+    }
+    @else {
+
+      @if (urlImage.value.length > 5) {
+        <div class="flex flex-col justify-end gap-3">
+          <p-image
+            [src]="urlImage.value"
+            alt="Preview"
+            width="100"
+            [preview]="true"
+          ></p-image>
+        </div>
+      }
+    }
   </div>
   <!-- Synopsis -->
   <div class="flex flex-col gap-1">
@@ -180,7 +203,7 @@
     }
   </div>
 
-  <!-- Image + Date -->
+  <!-- Date + Etat-->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="flex flex-col gap-1">
       <label class="text-sm text-gray-600">Date de parution</label>

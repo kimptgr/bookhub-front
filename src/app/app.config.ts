@@ -9,9 +9,11 @@ import {providePrimeNG} from 'primeng/config';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './interceptors/authInterceptor';
 import {MessageService} from 'primeng/api';
+import {DatePipe} from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    DatePipe,
     provideHttpClient(withInterceptors([authInterceptor])),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),

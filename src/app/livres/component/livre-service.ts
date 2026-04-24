@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Livre} from '../../models/livre';
-import {catchError, map, throwError} from 'rxjs';
+import {catchError, map, Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment'
 import {LivreView} from '../../models/livreView';
 import {Router} from '@angular/router';
@@ -32,6 +32,19 @@ export class LivreService {
       catchError(error => {
         return throwError(() => error);
       })
+    );
+  }
+
+  public faireRecherche(pageIndex: number, pageSize: number, recherche: any): Observable<any>{
+    return this.http.get<any>(`${this.BASE_URL}/books`,
+      {
+        params: new HttpParams()
+          .set('saisie', recherche.saisie)
+          .set('genres', recherche.genres)
+          .set('disponibilite', recherche.disponibilite)
+          .set('page', pageIndex)
+          .set('size', pageSize)
+      }
     );
   }
 }

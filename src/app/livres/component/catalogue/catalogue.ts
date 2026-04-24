@@ -7,11 +7,11 @@ import {GenreService} from '../../../genre/genre-service';
 import {Select} from 'primeng/select';
 import {InputText} from 'primeng/inputtext';
 import {Button} from 'primeng/button';
-import {LivreService} from '../../service/livre.service';
 import {Paginator, PaginatorState} from 'primeng/paginator';
-import {Livre} from '../../../models/livre';
 import {Page} from '../../../type/Page';
 import {AffichageLivres} from './affichage-livres/affichage-livres';
+import {LivreService} from '../livre-service';
+import {LivreView} from '../../../models/livreView';
 
 @Component({
   selector: 'app-catalogue',
@@ -33,7 +33,7 @@ export class Catalogue {
   public genresOptions: WritableSignal<any[]> = signal([]);
   public etatsOptions: WritableSignal<any[]> = signal([]);
 
-  public livres: WritableSignal<Livre[]> = signal([]);
+  public livres: WritableSignal<LivreView[]> = signal([]);
   public page: WritableSignal<Page > = signal({
           numberOfElements: 20,
           pageable: {

@@ -1,6 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/authService';
+import {environment} from '../../environments/environment';
 
 
 /*
@@ -14,6 +15,12 @@ inject permet d'injecter un service dans une fonction sans constructeur
 
 */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+
+  // Si on ne requête pas notre back, on ne fait rien
+  if (!req.url.startsWith(environment.base_url)) {
+    return next(req);
+  }
+
   const authService = inject(AuthService);
   const token = authService.getToken();
 

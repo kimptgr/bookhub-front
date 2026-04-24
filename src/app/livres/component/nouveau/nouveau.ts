@@ -16,7 +16,7 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {isbnValidator} from './isbn.directive';
 import {LivreService} from '../livre-service';
 import {Textarea} from 'primeng/textarea';
-import { MessageService } from 'primeng/api';
+import {MessageService} from 'primeng/api';
 import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';
 import {Image} from 'primeng/image';
 import {ProgressSpinner} from 'primeng/progressspinner';
@@ -35,7 +35,8 @@ import {ProgressSpinner} from 'primeng/progressspinner';
     DatePicker,
     FloatLabel,
     Textarea,
-    Image
+    Image,
+    ProgressSpinner
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',
@@ -54,8 +55,8 @@ export class Nouveau implements OnInit{
     this.genres$ = this.genreService.getGenres();
     this.etats$ = this.etatService.getEtats();
     this.auteurForm = this.fb.group({
-      nomAuteur: ['', Validators.required],
-      prenomAuteur: [''],
+      nom: ['', Validators.required],
+      prenom: [''],
     })
     this.livreForm = this.fb.nonNullable.group({
       titre: ['', Validators.required],
@@ -92,15 +93,15 @@ export class Nouveau implements OnInit{
 
   createAuteurForm() {
     return this.fb.group({
-      nomAuteur: ['', Validators.required],
-      prenomAuteur: [''],
+      nom: ['', Validators.required],
+      prenom: [''],
     })
   }
 
   addAuteur() {
   const auteurForm = this.fb.group({
-    nomAuteur: ['', Validators.required],
-    prenomAuteur: [''],
+    nom: ['', Validators.required],
+    prenom: [''],
   })
     this.auteurs.push(auteurForm);
   }
@@ -110,6 +111,8 @@ export class Nouveau implements OnInit{
   }
 
   onSubmit() {
+    this.formatIsbn();
+
     this.livreForm.markAllAsTouched();
     if (!this.livreForm.invalid) {
       const raw = this.livreForm.getRawValue();
@@ -147,6 +150,8 @@ export class Nouveau implements OnInit{
   }
 
   protected prechargerInformations() {
+    this.formatIsbn();
+
     if (this.isbn.value.length === 0 || this.isbn.invalid) {
       this.messageService.add({severity: 'info', summary: 'Erreur', detail: 'Veuillez renseigner un ISBN valide'})
       return;
@@ -155,20 +160,31 @@ export class Nouveau implements OnInit{
     this.isLoading = true;
     this.openlibrairyService.getLivrePartiel(this.livreForm.get("isbn")?.value).subscribe(
       livre => {
+
         this.livreForm.patchValue({
           titre: livre.titre,
           auteurs: livre.auteur,
           urlImage: livre.urlImage,
           dateDeParution: new Date(livre.annee,0),
-        }
+        });
 
-        )
-        this.isLoading = false
+        this.isLoading = false;
       },
       error => {
-        this.isLoading = false
-        this.messageService.add({severity: 'error', summary: 'Erreur', detail: error})
+        this.isLoading = false;
+        this.messageService.add({severity: 'error', summary: 'Erreur', detail: error});
       }
     )
+  }
+
+  /**
+   * Fonction pour supprimer les espaces et les tirets
+   */
+  private formatIsbn(): void {
+    const control = this.livreForm.get('isbn');
+
+    if (control) {
+      control.patchValue(control.value.replaceAll(/[\s-]/g, ''));
+    }
   }
 }

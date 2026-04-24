@@ -24,11 +24,11 @@
         <p class="text-sm text-gray-600 mb-1">
           <span class="font-semibold">Auteur(s) :</span>
           @for (auteur of l?.auteurs; track auteur; let i = $index) {
-          <span >
-            {{ auteur.prenom }} {{ auteur.nom }}
-            @if (!$last) {
-            <span>, </span>
-            }
+            <span>
+            {{ auteur.prenomAuteur }} {{ auteur.nomAuteur }}
+              @if (!$last) {
+                <span>, </span>
+              }
           </span>
           }
         </p>
@@ -47,10 +47,10 @@
         <!-- Genres -->
         <div class="flex flex-wrap gap-2 mt-2">
           @for (genre of l?.genres; track genre; let i = $index) {
-          <p-tag
-            [value]="genre.libelle"
-            severity="info"
-          ></p-tag>
+            <p-tag
+              [value]="genre.libelle"
+              severity="info"
+            ></p-tag>
           }
         </div>
 
@@ -77,18 +77,18 @@
     <div class="mt-6 flex items-center gap-3">
 
       @if (l?.etat?.libelle !== 'INUTILISABLE') {
-      <button
-        pButton
-        type="button"
-        class="p-button-success"
-        (click)="onReservation()"
-      >
-        <span pButtonLabel>Réserver</span>
-      </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-success"
+          (click)="onReservation()"
+        >
+          <span pButtonLabel>Réserver</span>
+        </button>
       } @else {
-      <p class="text-red-500 font-medium">
-        Livre indisponible
-      </p>
+        <p class="text-red-500 font-medium">
+          Livre indisponible
+        </p>
       }
 
     </div>

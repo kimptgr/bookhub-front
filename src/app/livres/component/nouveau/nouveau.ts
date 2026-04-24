@@ -19,6 +19,7 @@ import {Textarea} from 'primeng/textarea';
 import { MessageService } from 'primeng/api';
 import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';
 import {Image} from 'primeng/image';
+import {ProgressSpinner} from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-nouveau',
@@ -35,6 +36,7 @@ import {Image} from 'primeng/image';
     FloatLabel,
     Textarea,
     Image,
+    ProgressSpinner,
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',
@@ -44,6 +46,7 @@ export class Nouveau implements OnInit{
   auteurForm!: FormGroup;
   genres$!: Observable<Genre[]>;
   etats$!: Observable<Etat[]>;
+  isLoading: boolean = false;
 
   constructor(private datePipe: DatePipe, private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService, private livreService: LivreService, private messageService: MessageService, private openlibrairyService: OpenlibrairyService) {
   }
@@ -150,6 +153,7 @@ export class Nouveau implements OnInit{
       return;
     }
 
+    this.isLoading = true;
     this.openlibrairyService.getLivrePartiel(this.livreForm.get("isbn")?.value).subscribe(
       livre => {
         this.livreForm.patchValue({
@@ -157,7 +161,10 @@ export class Nouveau implements OnInit{
           auteurs: livre.auteur,
           urlImage: livre.urlImage,
           dateDeParution: new Date(livre.annee,0),
-        })
+        }
+
+        )
+        this.isLoading = false
       },
       error => {
         this.messageService.add({severity: 'error', summary: 'Erreur', detail: error})

@@ -4,7 +4,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import { AuthService } from '../../services/authService';
-import { utilisateurService } from '../../services/utilisateurService';
 import { CommonModule } from '@angular/common';
 import {InputText} from 'primeng/inputtext';
 import {FloatLabel} from 'primeng/floatlabel';
@@ -23,8 +22,6 @@ export class Connexion {
   form: FormGroup;
   erreur: string = '';
 
- // const role = this.utilisateurService.getRole();
- // const id   = this.utilisateurService.getId();
 
   // une instance du service, le service d'authentification et le service de navigation pour la redirection
   constructor(

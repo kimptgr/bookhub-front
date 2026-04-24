@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {LivreView} from '../../../models/livreView';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LivreService} from '../livre-service';
@@ -6,7 +6,7 @@ import {catchError, Observable, throwError} from 'rxjs';
 import {AsyncPipe, DatePipe} from '@angular/common';
 import {Card} from 'primeng/card';
 import {Tag} from 'primeng/tag';
-import {Button, ButtonDirective, ButtonLabel} from 'primeng/button';
+import {ButtonDirective, ButtonLabel} from 'primeng/button';
 import {ReservationService} from '../../../reservation/reservation-service';
 import {MessageService} from 'primeng/api';
 
@@ -18,8 +18,7 @@ import {MessageService} from 'primeng/api';
     DatePipe,
     Tag,
     ButtonDirective,
-    ButtonLabel,
-    Button
+    ButtonLabel
   ],
   templateUrl: './details.html',
   styleUrl: './details.css',

@@ -16,8 +16,7 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {isbnValidator} from './isbn.directive';
 import {LivreService} from '../livre-service';
 import {Textarea} from 'primeng/textarea';
-import {Toast} from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-nouveau',
@@ -32,8 +31,7 @@ import { MessageService } from 'primeng/api';
     Select,
     DatePicker,
     FloatLabel,
-    Textarea,
-    Toast
+    Textarea
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',

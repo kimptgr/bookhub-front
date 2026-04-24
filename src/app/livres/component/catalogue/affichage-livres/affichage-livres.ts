@@ -1,11 +1,10 @@
-import {Component, effect, input, InputSignal} from '@angular/core';
+import {Component, input, InputSignal} from '@angular/core';
 import {Livre} from '../../../../models/livre';
-import {NgOptimizedImage, TitleCasePipe, UpperCasePipe} from '@angular/common';
+import {TitleCasePipe, UpperCasePipe} from '@angular/common';
 
 @Component({
   selector: 'app-affichage-livres',
   imports: [
-    NgOptimizedImage,
     UpperCasePipe,
     TitleCasePipe
   ],
@@ -14,10 +13,4 @@ import {NgOptimizedImage, TitleCasePipe, UpperCasePipe} from '@angular/common';
 })
 export class AffichageLivres {
   livres: InputSignal<Livre[]> = input.required();
-
-  // constructor() {
-  //   effect(() => {
-  //     console.log(this.livres());
-  //   })
-  // }
 }

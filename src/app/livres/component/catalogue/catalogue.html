@@ -1,3 +1,5 @@
+<h
+
 <form class="flex flex-col items-center gap-6 w-full max-w-4xl mx-auto p-4" [formGroup]="formgroup">
   <p-floatlabel class="w-full">
     <input pInputText class="w-full" type="text" id="saisie" formControlName="saisie" />
@@ -30,13 +32,18 @@
     </p-floatlabel>
   </div>
 
-
-  <p-button severity="info" (onClick)="onSubmit()">
+    <p-button severity="info" (onClick)="onSubmit()">
     Rechercher
   </p-button>
 </form>
 
+  <app-affichage-livres
+    [livres] = livres()
+    class="flex flex-wrap gap-4 justify-center px-4"
+  />
 
-<div class="card flex justify-center">
-    <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="120" [rowsPerPageOptions]="[10, 20, 30]" />
+@if (livres().length > 0) {
+  <div class="card flex justify-center">
+    <p-paginator (onPageChange)="onPageChange($event)" [first]="page().pageable.pageNumber" [rows]="page().pageable.pageSize" [totalRecords]="page().numberOfElements" [rowsPerPageOptions]="[10, 20, 30]" />
 </div>
+}

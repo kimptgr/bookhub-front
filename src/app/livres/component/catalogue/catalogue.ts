@@ -11,6 +11,7 @@ import {LivreService} from '../../service/livre.service';
 import {Paginator, PaginatorState} from 'primeng/paginator';
 import {Livre} from '../../../models/livre';
 import {Page} from '../../../type/Page';
+import {AffichageLivres} from './affichage-livres/affichage-livres';
 
 @Component({
   selector: 'app-catalogue',
@@ -21,7 +22,8 @@ import {Page} from '../../../type/Page';
     Select,
     InputText,
     Button,
-    Paginator
+    Paginator,
+    AffichageLivres
   ],
   templateUrl: './catalogue.html',
   styleUrl: './catalogue.css',
@@ -32,10 +34,13 @@ export class Catalogue {
   public etatsOptions: WritableSignal<any[]> = signal([]);
 
   public livres: WritableSignal<Livre[]> = signal([]);
-  public page: WritableSignal<Page | null> = signal(null);
-
-  public first: number = 0;
-  public rows: number = 20;
+  public page: WritableSignal<Page > = signal({
+          numberOfElements: 20,
+          pageable: {
+            pageNumber: 0,
+            pageSize: 20
+          }
+        });
 
   public constructor(private readonly etatService: EtatService,
                      private readonly genreService: GenreService,
@@ -69,13 +74,11 @@ export class Catalogue {
 
 
   public onSubmit(): void {
-    console.log(this.first);
-    console.log(this.rows);
-    console.log(this.formgroup.value);
 
-    this.livreService.faireRecherche(this.first, this.rows, this.formgroup.value).subscribe({
+    this.livreService.faireRecherche(this.page().pageable.pageNumber, this.page().pageable.pageSize, this.formgroup.value).subscribe({
       next: (response) => {
         this.livres.set(response.content);
+        console.log(this.livres());
 
         const page: Page = {
           numberOfElements: response.numberOfElements,
@@ -90,7 +93,10 @@ export class Catalogue {
   }
 
   public onPageChange(event: PaginatorState): void {
-        this.first = event.first ?? 0;
-        this.rows = event.rows ?? 20;
-    }
+    const newPage: Page = this.page();
+    newPage.pageable.pageNumber = event.first ?? 0;
+    newPage.pageable.pageSize = event.rows ?? 20;
+
+    this.page.set(newPage);
+  }
 }

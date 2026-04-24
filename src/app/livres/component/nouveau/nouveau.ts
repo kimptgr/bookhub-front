@@ -34,9 +34,7 @@ import {ProgressSpinner} from 'primeng/progressspinner';
     Select,
     DatePicker,
     FloatLabel,
-    Textarea,
-    Image,
-    // ProgressSpinner,
+    Textarea
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',

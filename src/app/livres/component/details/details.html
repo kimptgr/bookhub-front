@@ -26,7 +26,7 @@
           <span class="font-semibold">Auteur(s) :</span>
           @for (auteur of l?.auteurs; track auteur; let i = $index) {
             <span>
-            {{ auteur.prenomAuteur }} {{ auteur.nomAuteur }}
+            {{ auteur.prenom }} {{ auteur.nom }}
               @if (!$last) {
                 <span>, </span>
               }

@@ -36,7 +36,7 @@ export class LivreService {
   }
 
   public faireRecherche(pageIndex: number, pageSize: number, recherche: any): Observable<any>{
-    return this.http.get<any>(`${this.BASE_URL}/books`,
+    return this.http.get<any>(`${this.BASE_URL}/books/search`,
       {
         params: new HttpParams()
           .set('saisie', recherche.saisie)

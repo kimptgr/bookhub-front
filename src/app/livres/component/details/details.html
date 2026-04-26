@@ -56,13 +56,28 @@
         </div>
 
         <!-- Etat -->
+        @if (l?.etat?.libelle === 'INUTILISABLE') {
         <div class="mt-3">
           <p-tag
             [value]="l?.etat?.libelle"
-            [severity]="l?.etat?.libelle === 'DISPONIBLE' ? 'success' : 'danger'"
+            [severity]="'danger'"
           ></p-tag>
         </div>
-
+        } @else if (l?.etat?.libelle == 'DISPONIBLE') {
+          <div class="mt-3">
+            <p-tag
+              [value]="l?.etat?.libelle"
+              [severity]="'success'"
+            ></p-tag>
+          </div>
+        } @else {
+          <div class="mt-3">
+            <p-tag
+              [value]="'SUR LISTE D\'ATTENTE'"
+              [severity]="'danger'"
+            ></p-tag>
+          </div>
+        }
       </div>
     </div>
 
@@ -77,7 +92,7 @@
     <!-- ACTIONS -->
     <div class="mt-6 flex items-center gap-3">
 
-      @if (l?.etat?.libelle !== 'INUTILISABLE') {
+      @if (l?.etat?.libelle !== 'INUTILISABLE' && !dejaReserve()) {
         <button
           pButton
           type="button"
@@ -86,11 +101,20 @@
         >
           <span pButtonLabel>Réserver</span>
         </button>
+      } @else if (dejaReserve()){
+        <button
+          pButton
+          type="button"
+          class="p-button-info"
+          (click)="onSeRetirer()"
+        >
+          <span pButtonLabel>Retirer sa réservation</span>
+        </button>
       } @else {
-        <p class="text-red-500 font-medium">
-          Livre indisponible
-        </p>
-      }
+      <p class="text-red-500 font-medium">
+        Livre indisponible
+      </p>
+    }
 
     </div>
 

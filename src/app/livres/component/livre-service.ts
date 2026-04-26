@@ -13,7 +13,7 @@ export class LivreService {
 
   private readonly BASE_URL = environment.base_url;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   postLivre(livre: Livre) {
     return this.http.post(this.BASE_URL+ '/books', livre).pipe(
@@ -27,7 +27,7 @@ export class LivreService {
     );
   }
 
-  getById(id: string | null) {
+  getById(id: number | null) {
     return this.http.get<LivreView>(`${this.BASE_URL}/books/${id}`).pipe(
       catchError(error => {
         return throwError(() => error);

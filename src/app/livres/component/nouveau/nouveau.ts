@@ -136,7 +136,6 @@ export class Nouveau implements OnInit{
             summary: 'Erreur',
             detail: 'Une erreur est survenue lors de l\'ajout du livre \n' + error.error
           })
-          console.error(error);
         }
     }
       )

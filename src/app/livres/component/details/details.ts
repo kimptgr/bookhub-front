@@ -10,6 +10,9 @@ import {ButtonDirective, ButtonLabel} from 'primeng/button';
 import {ReservationService} from '../../../reservation/reservation-service';
 import {MessageService} from 'primeng/api';
 import {UtilisateurService} from '../../../services/utilisateurService';
+import {CodeEtat} from '../../../models/enum/code-etat.enum';
+import {CodeEtatPipe} from '../../../pipe/code-etat.pipe';
+import {Message} from 'primeng/message';
 
 @Component({
   selector: 'app-details',
@@ -19,7 +22,9 @@ import {UtilisateurService} from '../../../services/utilisateurService';
     DatePipe,
     Tag,
     ButtonDirective,
-    ButtonLabel
+    ButtonLabel,
+    CodeEtatPipe,
+    Message
   ],
   templateUrl: './details.html',
   styleUrl: './details.css',
@@ -28,6 +33,8 @@ export class Details {
   livre$: Observable<LivreView>;
   mesReservations: Signal<number[] | null>;
   dejaReserve;
+
+  public readonly codeEtat = CodeEtat;
 
   // users$: Observable<userDTO>;
   idLivre: number;

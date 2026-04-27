@@ -1,0 +1,5 @@
+export enum Role {
+  UTILISATEUR,
+  BIBLIOTHECAIRE,
+  ADMINISTRATEUR
+}

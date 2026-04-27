@@ -1,5 +1,9 @@
 <h4 class="text-center m-2 text-4xl font-bold">Catalogue</h4>
-<app-choix-utilisateur/>
+@if (roleUtilisateur() == 'BIBLIOTHECAIRE'|| roleUtilisateur() == 'ADMINISTRATEUR') {
+<section class="mx-auto p-4">
+  <app-choix-utilisateur class="shadow-sm" [userIdSignal]="userIdSelected"/>
+</section>
+}
 <form class="flex flex-col items-center gap-6 w-full max-w-4xl mx-auto p-4" [formGroup]="formgroup">
   <p-floatlabel class="w-full">
     <input pInputText class="w-full" type="text" id="saisie" formControlName="saisie" />
@@ -43,7 +47,7 @@
     <p-progressSpinner ariaLabel="loading" />
 
   } @else if (livres().length > 0) {
-    <app-affichage-livres [livres]="livres()" class="flex flex-wrap gap-6 justify-center px-6 w-full overflow-hidden" />
+    <app-affichage-livres [livres]="livres()"  [userIdSignal]="userIdSelected" class="flex flex-wrap gap-6 justify-center px-6 w-full overflow-hidden" />
   } @else {
     <p-message>Aucun livre ne correspond à vos critères de recherche</p-message>
   }

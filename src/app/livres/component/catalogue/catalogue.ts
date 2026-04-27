@@ -15,6 +15,8 @@ import {ProgressSpinner} from 'primeng/progressspinner';
 import {Message} from 'primeng/message';
 import {CodeEtat} from '../../../models/enum/code-etat.enum';
 import {ChoixUtilisateur} from './choix-utilisateur/choix-utilisateur';
+import {UtilisateurService} from '../../../services/utilisateurService';
+import {UserDTO} from '../../../models/userDTO';
 
 @Component({
   selector: 'app-catalogue',
@@ -55,8 +57,10 @@ export class Catalogue {
 
   public isLoading: boolean = true;
 
+  public userIdSelected:WritableSignal<number | null> = signal(null);
+
   public constructor(private readonly genreService: GenreService,
-                     private readonly livreService: LivreService) {
+                     private readonly livreService: LivreService, private readonly utilisateurService: UtilisateurService) {
 
     this.formgroup = new FormGroup({
       saisie: new FormControl<string>(''),
@@ -100,7 +104,6 @@ export class Catalogue {
   }
 
   public onPageChange(event: PaginatorState): void {
-    console.log(event);
     const newPage: Page = this.page();
     newPage.pageable.pageNumber = event.page ?? 0;
     newPage.pageable.pageSize = event.rows ?? 20;
@@ -108,5 +111,9 @@ export class Catalogue {
     this.page.set(newPage);
 
     this.onSubmit();
+  }
+
+  roleUtilisateur() : string|null {
+    return this.utilisateurService.getRole();
   }
 }

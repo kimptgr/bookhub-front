@@ -1,6 +1,6 @@
 export interface Page {
 
-  numberOfElements: number;
+  totalElements: number;
 
   "pageable": {
     "pageNumber": number,

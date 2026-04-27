@@ -1,8 +1,7 @@
-import {Component, signal, WritableSignal} from '@angular/core';
+import {Component, Signal, signal, WritableSignal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MultiSelect} from 'primeng/multiselect';
 import {FloatLabel} from 'primeng/floatlabel';
-import {EtatService} from '../../../etat/etat-service';
 import {GenreService} from '../../../genre/genre-service';
 import {Select} from 'primeng/select';
 import {InputText} from 'primeng/inputtext';
@@ -12,6 +11,9 @@ import {Page} from '../../../type/Page';
 import {AffichageLivres} from './affichage-livres/affichage-livres';
 import {LivreService} from '../livre-service';
 import {LivreView} from '../../../models/livreView';
+import {ProgressSpinner} from 'primeng/progressspinner';
+import {Message} from 'primeng/message';
+import {CodeEtat} from '../../../models/enum/code-etat.enum';
 
 @Component({
   selector: 'app-catalogue',
@@ -23,7 +25,9 @@ import {LivreView} from '../../../models/livreView';
     InputText,
     Button,
     Paginator,
-    AffichageLivres
+    AffichageLivres,
+    ProgressSpinner,
+    Message
   ],
   templateUrl: './catalogue.html',
   styleUrl: './catalogue.css',
@@ -31,19 +35,25 @@ import {LivreView} from '../../../models/livreView';
 export class Catalogue {
   public formgroup: FormGroup;
   public genresOptions: WritableSignal<any[]> = signal([]);
-  public etatsOptions: WritableSignal<any[]> = signal([]);
+  public etatsOptions = Object.entries(CodeEtat).map(
+    ([key, value]) => ({
+      libelleEtat: value,
+      valeurEtat: key
+    })
+  );
 
   public livres: WritableSignal<LivreView[]> = signal([]);
   public page: WritableSignal<Page > = signal({
-          numberOfElements: 20,
+          totalElements: 20,
           pageable: {
             pageNumber: 0,
             pageSize: 20
           }
         });
 
-  public constructor(private readonly etatService: EtatService,
-                     private readonly genreService: GenreService,
+  public isLoading: boolean = true;
+
+  public constructor(private readonly genreService: GenreService,
                      private readonly livreService: LivreService) {
 
     this.formgroup = new FormGroup({
@@ -63,13 +73,8 @@ export class Catalogue {
       },
     });
 
-    this.etatService.getEtats().subscribe({
-      next: (etats) => {
-        this.etatsOptions.set(
-          etats.map(etat => etat.libelle)
-        );
-      },
-    });
+    // On lance la recherche dès l'arrivée sur l'écran
+    this.onSubmit();
   }
 
 
@@ -77,11 +82,11 @@ export class Catalogue {
 
     this.livreService.faireRecherche(this.page().pageable.pageNumber, this.page().pageable.pageSize, this.formgroup.value).subscribe({
       next: (response) => {
+        this.isLoading = false;
         this.livres.set(response.content);
-        console.log(this.livres());
 
         const page: Page = {
-          numberOfElements: response.numberOfElements,
+          totalElements: response.totalElements,
           pageable: {
             pageNumber: response.pageable.pageNumber,
             pageSize: response.pageable.pageSize
@@ -93,10 +98,13 @@ export class Catalogue {
   }
 
   public onPageChange(event: PaginatorState): void {
+    console.log(event);
     const newPage: Page = this.page();
-    newPage.pageable.pageNumber = event.first ?? 0;
+    newPage.pageable.pageNumber = event.page ?? 0;
     newPage.pageable.pageSize = event.rows ?? 20;
 
     this.page.set(newPage);
+
+    this.onSubmit();
   }
 }

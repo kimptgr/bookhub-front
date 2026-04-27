@@ -24,7 +24,11 @@
       <p-select
         id="disponibilite"
         formControlName="disponibilite"
-        [options]="etatsOptions()"
+        [options]="etatsOptions"
+        optionLabel="libelleEtat"
+        optionValue="valeurEtat"
+        [checkmark]="true"
+        [showClear]="true"
         appendTo="body"
         class="w-full"
       />
@@ -32,18 +36,30 @@
     </p-floatlabel>
   </div>
 
-    <p-button severity="info" (onClick)="onSubmit()">
-    Rechercher
-  </p-button>
+  <p-button severity="info" (onClick)="onSubmit()">Rechercher</p-button>
 </form>
 
-  <app-affichage-livres
-    [livres] = livres()
-    class="flex flex-wrap gap-4 justify-center px-4"
-  />
+<div class="flex flex-col m-auto items-center gap-4 w-full">
+  @if (isLoading) {
+    <p-progressSpinner ariaLabel="loading" />
 
-@if (livres().length > 0) {
-  <div class="card flex justify-center">
-    <p-paginator (onPageChange)="onPageChange($event)" [first]="page().pageable.pageNumber" [rows]="page().pageable.pageSize" [totalRecords]="page().numberOfElements" [rowsPerPageOptions]="[10, 20, 30]" />
+  } @else if (livres().length > 0) {
+    <app-affichage-livres [livres]="livres()" class="flex flex-wrap gap-6 justify-center px-6 w-full overflow-hidden" />
+  } @else {
+    <p-message>Aucun livre ne correspond à vos critères de recherche</p-message>
+  }
+
+  <p-paginator (onPageChange)="onPageChange($event)" [first]="page().pageable.pageNumber" [rows]="page().pageable.pageSize" [totalRecords]="page().totalElements" [rowsPerPageOptions]="[10, 20, 30]" />
 </div>
-}
+
+<!--    afficher état sur miniature
+
+    Message si pas de livre
+
+    Changement de page
+
+    Cliquer sur miniature envoit au détails
+
+    Afficher si dispo sur page d'accueil
+
+-->

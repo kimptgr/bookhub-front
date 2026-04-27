@@ -20,6 +20,7 @@ import {MessageService} from 'primeng/api';
 import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';
 import {Image} from 'primeng/image';
 import {ProgressSpinner} from 'primeng/progressspinner';
+import {Dialog} from 'primeng/dialog';
 
 @Component({
   selector: 'app-nouveau',
@@ -36,7 +37,8 @@ import {ProgressSpinner} from 'primeng/progressspinner';
     FloatLabel,
     Textarea,
     Image,
-    ProgressSpinner
+    ProgressSpinner,
+    Dialog
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',
@@ -47,6 +49,7 @@ export class Nouveau implements OnInit{
   genres$!: Observable<Genre[]>;
   etats$!: Observable<Etat[]>;
   isLoading: boolean = false;
+  isShow: boolean = false;
 
   constructor(private datePipe: DatePipe, private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService, private livreService: LivreService, private messageService: MessageService, private openlibrairyService: OpenlibrairyService) {
   }

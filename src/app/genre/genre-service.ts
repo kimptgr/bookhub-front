@@ -16,4 +16,8 @@ export class GenreService {
   public getGenres(): Observable<Genre[]>{
     return this.http.get<Genre[]>(`${this.BASE_URL}/genres`)
   }
+
+  postGenre(labelGenre: string) {
+    return this.http.post(this.BASE_URL+ '/genres', {libelle: labelGenre}, {observe: "response"});
+  }
 }

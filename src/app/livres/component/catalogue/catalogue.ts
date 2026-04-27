@@ -1,4 +1,4 @@
-import {Component, Signal, signal, WritableSignal} from '@angular/core';
+import {Component, signal, WritableSignal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MultiSelect} from 'primeng/multiselect';
 import {FloatLabel} from 'primeng/floatlabel';
@@ -14,6 +14,7 @@ import {LivreView} from '../../../models/livreView';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {Message} from 'primeng/message';
 import {CodeEtat} from '../../../models/enum/code-etat.enum';
+import {ChoixUtilisateur} from './choix-utilisateur/choix-utilisateur';
 
 @Component({
   selector: 'app-catalogue',
@@ -27,7 +28,8 @@ import {CodeEtat} from '../../../models/enum/code-etat.enum';
     Paginator,
     AffichageLivres,
     ProgressSpinner,
-    Message
+    Message,
+    ChoixUtilisateur
   ],
   templateUrl: './catalogue.html',
   styleUrl: './catalogue.css',

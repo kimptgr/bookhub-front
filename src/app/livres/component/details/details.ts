@@ -39,6 +39,7 @@ export class Details {
 
   // users$: Observable<userDTO>;
   idLivre: number;
+
   // showReservationDialog: boolean = false;
 
   constructor(
@@ -102,11 +103,14 @@ export class Details {
     this.reservationService.refreshMesReservations();
   }
 
-  roleUtilisateur() : string|null {
+  roleUtilisateur(): string | null {
     return this.utilisateurService.getRole();
   }
 
-  protected onDelete() {
+  onDelete() {
+    if (this.roleUtilisateur() == 'BIBLIOTHECAIRE') {
+      this.livreService.DeleteByID(this.idLivre).subscribe({});
+    }
 
   }
 }

@@ -47,4 +47,19 @@ export class LivreService {
       }
     );
   }
+
+  patchLivre(id: number, payload: any): Observable<void> {
+    return this.http.patch<void>(`${this.BASE_URL}/books/${id}`, payload);
+  }
+
+  //todo : revoir erreur
+  DeleteByID(id: number) {
+    return this.http.delete(`${this.BASE_URL}/books/${id}`).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      })
+    )
+  }
+
+
 }

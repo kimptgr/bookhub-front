@@ -1,6 +1,6 @@
 import {Component, computed, Signal} from '@angular/core';
 import {LivreView} from '../../../models/livreView';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {LivreService} from '../livre-service';
 import {catchError, Observable, throwError} from 'rxjs';
 import {AsyncPipe, DatePipe} from '@angular/common';
@@ -19,7 +19,8 @@ import {UtilisateurService} from '../../../services/utilisateurService';
     DatePipe,
     Tag,
     ButtonDirective,
-    ButtonLabel
+    ButtonLabel,
+    RouterLink
   ],
   templateUrl: './details.html',
   styleUrl: './details.css',
@@ -92,5 +93,13 @@ export class Details {
 
   onSeRetirer() {
     this.reservationService.refreshMesReservations();
+  }
+
+  roleUtilisateur() : string|null {
+    return this.utilisateurService.getRole();
+  }
+
+  protected onDelete() {
+
   }
 }

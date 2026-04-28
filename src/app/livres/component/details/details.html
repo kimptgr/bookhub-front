@@ -120,7 +120,25 @@
           </p>
         }
 
-      </div>
+        @if (roleUtilisateur() == 'BIBLIOTHECAIRE') {
+          <button
+            pButton
+            type="button"
+            class="p-button-info"
+            [routerLink]="['/livres/modifier', idLivre]"
+          >Modifier
+          </button>
+
+          <button
+            pButton
+            type="button"
+            class="p-button-danger"
+            (click)="onDelete()"
+          >Supprimer
+          </button>
+        }
+
+    </div>
 
     </p-card>
 

@@ -1,6 +1,6 @@
 import {Component, computed, Signal} from '@angular/core';
 import {LivreView} from '../../../models/livreView';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {LivreService} from '../livre-service';
 import {catchError, Observable, throwError} from 'rxjs';
 import {AsyncPipe, DatePipe} from '@angular/common';
@@ -24,7 +24,8 @@ import {Message} from 'primeng/message';
     ButtonDirective,
     ButtonLabel,
     CodeEtatPipe,
-    Message
+    Message,
+    RouterLink
   ],
   templateUrl: './details.html',
   styleUrl: './details.css',
@@ -38,6 +39,7 @@ export class Details {
 
   // users$: Observable<userDTO>;
   idLivre: number;
+
   // showReservationDialog: boolean = false;
 
   constructor(
@@ -99,5 +101,31 @@ export class Details {
 
   onSeRetirer() {
     this.reservationService.refreshMesReservations();
+  }
+
+  roleUtilisateur(): string | null {
+    return this.utilisateurService.getRole();
+  }
+
+  onDelete() {
+    if (this.roleUtilisateur() == 'BIBLIOTHECAIRE') {
+      this.livreService.DeleteByID(this.idLivre).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Livre supprimé',
+            detail: 'Le livre a été supprimé avec succès'
+          });
+          this.router.navigate(['/catalogue']);
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: error.message
+          });
+        }
+      });
+    }
   }
 }

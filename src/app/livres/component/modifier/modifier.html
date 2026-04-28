@@ -1,0 +1,272 @@
+<form
+  [formGroup]="livreForm"
+  (ngSubmit)="onSubmit()"
+  class="max-w-2xl mx-auto p-6 my-1 bg-white rounded-2xl shadow-lg flex flex-col gap-5"
+>
+  <fieldset class="border-b pb-4">
+    <legend class="text-xl font-semibold text-gray-800">
+      ✏️ Modifier un livre
+    </legend>
+  </fieldset>
+
+  <!-- Titre -->
+  <div class="flex flex-col gap-2">
+    <p-floatlabel variant="on">
+      <input
+        pInputText
+        type="text"
+        id="titre"
+        formControlName="titre"
+        class="w-full"
+        [invalid]="isInvalid('titre')"
+      />
+      <label for="titre">Titre</label>
+    </p-floatlabel>
+
+    @if (isInvalid('titre')) {
+      <p-message severity="error" size="small" variant="simple">
+        Titre obligatoire
+      </p-message>
+    }
+  </div>
+
+  <!-- Auteurs -->
+  <div class="flex flex-col gap-4">
+    <h2 class="text-lg font-medium text-gray-700">Auteur·rice(s)</h2>
+
+    <div formArrayName="auteurs" class="flex flex-col gap-2">
+      @for (auteur of auteurs.controls; track auteur; let i = $index) {
+        <div
+          [formGroupName]="i"
+          class="pt-5 p-4 border rounded-xl bg-gray-50 flex flex-col gap-3"
+        >
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <!-- Nom -->
+            <div class="flex flex-col gap-1">
+              <p-floatlabel variant="on">
+                <input
+                  [id]="'nomAuteur-' + i"
+                  pInputText
+                  formControlName="nom"
+                  class="w-full"
+                  [invalid]="auteur.get('nom')?.invalid && (auteur.get('nom')?.touched || auteur.get('nom')?.dirty)"
+                />
+                <label [for]="'nomAuteur-' + i">Nom</label>
+              </p-floatlabel>
+
+              @if (auteur.get('nom')?.invalid && (auteur.get('nom')?.touched || auteur.get('nom')?.dirty)) {
+                <p-message severity="error" size="small" variant="simple">
+                  Nom obligatoire
+                </p-message>
+              }
+            </div>
+
+            <!-- Prénom -->
+            <div>
+              <p-floatlabel variant="on">
+                <input
+                  pInputText
+                  type="text"
+                  formControlName="prenom"
+                  class="w-full"
+                />
+                <label>Prénom</label>
+              </p-floatlabel>
+            </div>
+          </div>
+
+          @if (auteurs.controls.length > 1) {
+            <p-button
+              class="self-end"
+              type="button"
+              severity="danger"
+              (click)="removeAuteur(i)"
+              [outlined]="true"
+            >
+              Supprimer
+            </p-button>
+          }
+        </div>
+      }
+
+      <p-button
+        type="button"
+        severity="secondary"
+        class="self-start"
+        (click)="addAuteur()"
+      >
+        + Ajouter une personne
+      </p-button>
+    </div>
+  </div>
+
+  <!-- Genres -->
+  <div class="flex flex-col gap-2">
+    <label class="text-sm text-gray-600">Genres</label>
+    <p-multiselect
+      formControlName="genres"
+      [options]="(genres$ | async) ?? []"
+      optionLabel="libelle"
+      optionValue="id"
+      placeholder="Sélectionner un genre"
+    ></p-multiselect>
+
+    @if (isInvalid('genres')) {
+      <p-message severity="error" size="small" variant="simple">
+        Au moins un genre obligatoire
+      </p-message>
+    }
+    <p-button type="button" severity="secondary" (click)="isShow = true">+ Ajouter un genre</p-button>
+
+  </div>
+
+  <!-- ISBN + URL -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <p-floatlabel variant="on">
+        <input
+          pInputText
+          type="text"
+          id="isbn"
+          formControlName="isbn"
+          class="w-full"
+          [invalid]="isInvalid('isbn')"
+        />
+        <label for="isbn">ISBN</label>
+      </p-floatlabel>
+
+      @if (isInvalid('isbn') && isbn.errors?.['required']) {
+        <p-message severity="error" size="small" variant="simple">ISBN obligatoire</p-message>
+      } @else if (isInvalid('isbn')) {
+        <p-message severity="error" size="small" variant="simple">ISBN invalide</p-message>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <p-floatlabel variant="on">
+        <input
+          pInputText
+          type="text"
+          id="urlImage"
+          formControlName="urlImage"
+          class="w-full"
+          [invalid]="isInvalid('urlImage')"
+        />
+        <label for="urlImage">URL image</label>
+      </p-floatlabel>
+
+      @if (isInvalid('urlImage')) {
+        <p-message severity="error" size="small">
+          URL invalide
+        </p-message>
+      }
+    </div>
+
+    <!-- Précharger le livre -->
+    <div class="flex center gap-3">
+      <p-button severity="primary" (click)="prechargerInformations()" [outlined]="true">
+        Préremplir
+      </p-button>
+    </div>
+    @if (isLoading) {
+      <p-progressSpinner ariaLabel="loading" />
+    }
+    @else {
+
+      @if (urlImage.value.length > 5) {
+        <div class="flex flex-col justify-end gap-3">
+          <p-image
+            [src]="urlImage.value"
+            alt="Preview"
+            width="100"
+            [preview]="true"
+          ></p-image>
+        </div>
+      }
+    }
+  </div>
+  <!-- Synopsis -->
+  <div class="flex flex-col gap-1">
+    <p-floatlabel variant="on">
+      <textarea
+        pInputTextarea
+        rows="3"
+        id="synopsis"
+        formControlName="synopsis"
+        class="w-full"
+        [invalid]="isInvalid('synopsis')"
+      ></textarea>
+      <label for="synopsis">Synopsis</label>
+    </p-floatlabel>
+
+    @if (isInvalid('synopsis')) {
+      <p-message severity="error" size="small">
+        Synopsis trop long
+      </p-message>
+    }
+  </div>
+
+  <!-- Date + Etat-->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm text-gray-600">Date de parution</label>
+      <p-datepicker
+        dateFormat="dd/mm/yy"
+        placeholder="jj/mm/aaaa"
+        formControlName="dateDeParution"
+        [invalid]="isInvalid('dateDeParution')"
+        [showIcon]="true"
+      ></p-datepicker>
+
+      @if (isInvalid('dateDeParution')) {
+        <p-message severity="error" size="small">
+          Date invalide
+        </p-message>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm text-gray-600">État</label>
+      <p-select
+        formControlName="idEtat"
+        [options]="(etats$ | async) ?? []"
+        optionLabel="libelle"
+        optionValue="id"
+        placeholder="Sélectionner un état"
+        class="w-full"
+      ></p-select>
+
+      @if (isInvalid('idEtat')) {
+        <p-message severity="error" size="small">
+          État obligatoire
+        </p-message>
+      }
+    </div>
+  </div>
+
+
+  <!-- Actions -->
+  <div class="flex justify-end gap-3 pt-4 border-t">
+    <p-button type="redirect" severity="secondary" [routerLink]="['/livres', idLivre]">
+      Annuler
+    </p-button>
+
+    <p-button type="submit" severity="primary">
+      💾 Enregistrer les modifications
+    </p-button>
+  </div>
+</form>
+
+<p-dialog [(visible)]="isShow" [modal]="true" [style]="{ width: '25rem' }">
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <label for="genre" class="font-bold whitespace-nowrap">Ajout d'un genre</label>
+    </div>
+  </ng-template>
+  <div class="flex items-center gap-4 mb-4">
+    <input [(ngModel)]="labelGenre" pInputText id="genre" class="flex-auto" autocomplete="off" />
+  </div>
+  <ng-template #footer>
+    <p-button label="Enregistrer" [outlined]="true" severity="primary" (click)="saveGenre()" />
+  </ng-template>
+</p-dialog>

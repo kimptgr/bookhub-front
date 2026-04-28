@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {InputText} from 'primeng/inputtext';
 import {Message} from 'primeng/message';
 import {GenreService} from '../../../genre/genre-service';
@@ -14,12 +14,14 @@ import {MultiSelect} from 'primeng/multiselect';
 import {DatePicker} from 'primeng/datepicker';
 import {FloatLabel} from 'primeng/floatlabel';
 import {isbnValidator} from './isbn.directive';
-import {LivreService} from '../livre-service';
+import {LivreService} from '../../../services/livre-service';
 import {Textarea} from 'primeng/textarea';
 import {MessageService} from 'primeng/api';
 import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';
 import {Image} from 'primeng/image';
 import {ProgressSpinner} from 'primeng/progressspinner';
+import {Dialog} from 'primeng/dialog';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-nouveau',
@@ -36,7 +38,9 @@ import {ProgressSpinner} from 'primeng/progressspinner';
     FloatLabel,
     Textarea,
     Image,
-    ProgressSpinner
+    ProgressSpinner,
+    Dialog,
+    FormsModule
   ],
   templateUrl: './nouveau.html',
   styleUrl: './nouveau.css',
@@ -47,6 +51,8 @@ export class Nouveau implements OnInit{
   genres$!: Observable<Genre[]>;
   etats$!: Observable<Etat[]>;
   isLoading: boolean = false;
+  isShow: boolean = false;
+  labelGenre:string = '';
 
   constructor(private datePipe: DatePipe, private fb: FormBuilder, private genreService: GenreService, private etatService: EtatService, private livreService: LivreService, private messageService: MessageService, private openlibrairyService: OpenlibrairyService) {
   }
@@ -136,10 +142,8 @@ export class Nouveau implements OnInit{
             summary: 'Erreur',
             detail: 'Une erreur est survenue lors de l\'ajout du livre \n' + error.error
           })
-          console.error(error);
         }
-    }
-      )
+    })
     }
   }
 
@@ -186,5 +190,44 @@ export class Nouveau implements OnInit{
     if (control) {
       control.patchValue(control.value.replaceAll(/[\s-]/g, ''));
     }
+  }
+
+  saveGenre() {
+    this.isShow = false;
+    if (this.labelGenre.trim() === '') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erreur de saisie',
+        detail: 'Le genre ne peut pas être vide.'
+      })
+      return;
+    }
+    this.genreService.postGenre(this.labelGenre)
+      .subscribe({
+        next:() => {
+          this.messageService.add({severity: 'success', summary: 'Genre ajouté', detail: ''})
+          this.genres$ = this.genreService.getGenres();
+          this.prechargeLeNouveauGenre(this.labelGenre);
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Une erreur est survenue lors de l\'ajout du genre \n' + error.error
+          })
+        }
+      })
+  }
+
+  private prechargeLeNouveauGenre(labelGenre: string) {
+    let nouveauGenre:Genre | undefined ;
+    this.genres$.subscribe({
+      next: (genres) => {
+        nouveauGenre = genres.find(g =>
+          g.libelle == labelGenre);
+        if (nouveauGenre) this.livreForm.get('genres')?.patchValue([...this.livreForm.get('genres')?.value, nouveauGenre.id]);
+      }
+      }
+    )
   }
 }

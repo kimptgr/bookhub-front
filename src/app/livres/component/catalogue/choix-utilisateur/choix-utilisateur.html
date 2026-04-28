@@ -1,0 +1,21 @@
+<p-floatlabel class="flex-1 min-w-50">
+<p-select
+  id="user"
+  [options]="users()"
+  optionLabel="email"
+  optionValue="id"
+  [checkmark]="true"
+  [showClear]="true"
+  appendTo="body"
+  class="w-full"
+  [(ngModel)]="userId"
+  (ngModelChange)="onSelectUser()"
+></p-select>
+<label>Usager·ère</label>
+</p-floatlabel>
+
+@if (showErrorMessage) {
+  <p-message severity="error" size="small">
+    Choix de l'usager·ère nécessaire pour réserver/emprunter
+  </p-message>
+}

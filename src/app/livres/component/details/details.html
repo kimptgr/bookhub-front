@@ -1,99 +1,149 @@
 @let l = livre$ | async;
 
-<div class="max-w-4xl mx-auto p-4">
+@if (l) {
+  @let cleCodeEtat = l.etat.libelle | codeEtat;
 
-  <p-card>
+  <div class="max-w-4xl mx-auto p-4">
 
-    <!-- HEADER -->
-    <div class="flex flex-col md:flex-row gap-6">
+    <p-card>
 
-      <!-- Image -->
-      <img
-        [src]="l?.urlImage"
-        onerror="this.src='https://picsum.photos/200'"
-        [alt]="l?.titre"
-        class="w-40 h-auto rounded-xl shadow-md object-cover"
-      />
+      <!-- HEADER -->
+      <div class="flex flex-col md:flex-row gap-6">
 
-      <!-- Infos -->
-      <div class="flex-1">
-        <h2 class="text-2xl font-bold mb-2">
-          {{ l?.titre }}
-        </h2>
+        <!-- Image -->
+        <img
+          [src]="l?.urlImage"
+          onerror="this.src='https://picsum.photos/200'"
+          [alt]="l?.titre"
+          class="w-40 h-auto rounded-xl shadow-md object-cover"
+        />
 
-        <!-- Auteurs -->
-        <p class="text-sm text-gray-600 mb-1">
-          <span class="font-semibold">Auteur(s) :</span>
-          @for (auteur of l?.auteurs; track auteur; let i = $index) {
-            <span>
+        <!-- Infos -->
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold mb-2">
+            {{ l?.titre }}
+          </h2>
+
+          <!-- Auteurs -->
+          <p class="text-sm text-gray-600 mb-1">
+            <span class="font-semibold">Auteur(s) :</span>
+            @for (auteur of l?.auteurs; track auteur; let i = $index) {
+              <span>
             {{ auteur.prenom }} {{ auteur.nom }}
-              @if (!$last) {
-                <span>, </span>
-              }
+                @if (!$last) {
+                  <span>, </span>
+                }
           </span>
-          }
-        </p>
+            }
+          </p>
 
-        <!-- ISBN -->
-        <p class="text-sm text-gray-600 mb-1">
-          <span class="font-semibold">ISBN :</span> {{ l?.isbn }}
-        </p>
+          <!-- ISBN -->
+          <p class="text-sm text-gray-600 mb-1">
+            <span class="font-semibold">ISBN :</span> {{ l?.isbn }}
+          </p>
 
-        <!-- Date -->
-        <p class="text-sm text-gray-600 mb-1">
-          <span class="font-semibold">Parution :</span>
-          {{ l?.dateDeParution | date:'dd/MM/yy' }}
-        </p>
+          <!-- Date -->
+          <p class="text-sm text-gray-600 mb-1">
+            <span class="font-semibold">Parution :</span>
+            {{ l?.dateDeParution | date:'dd/MM/yy' }}
+          </p>
 
-        <!-- Genres -->
-        <div class="flex flex-wrap gap-2 mt-2">
-          @for (genre of l?.genres; track genre; let i = $index) {
-            <p-tag
-              [value]="genre.libelle"
-              severity="info"
-            ></p-tag>
+          <!-- Genres -->
+          <div class="flex flex-wrap gap-2 mt-2">
+            @for (genre of l?.genres; track genre; let i = $index) {
+              <p-tag
+                [value]="genre.libelle"
+                severity="info"
+              ></p-tag>
+            }
+          </div>
+
+          <!-- Etat -->
+          @if (cleCodeEtat === codeEtat.INUTILISABLE) {
+            <div class="mt-3">
+              <p-tag
+                [value]="l?.etat?.libelle"
+                [severity]="'danger'"
+              ></p-tag>
+            </div>
+          } @else if (cleCodeEtat === codeEtat.DISPONIBLE) {
+            <div class="mt-3">
+              <p-tag
+                [value]="l?.etat?.libelle"
+                [severity]="'success'"
+              ></p-tag>
+            </div>
+          } @else {
+            <div class="mt-3">
+              <p-tag
+                [value]="'SUR LISTE D\'ATTENTE'"
+                [severity]="'danger'"
+              ></p-tag>
+            </div>
           }
         </div>
-
-        <!-- Etat -->
-        <div class="mt-3">
-          <p-tag
-            [value]="l?.etat?.libelle"
-            [severity]="l?.etat?.libelle === 'DISPONIBLE' ? 'success' : 'danger'"
-          ></p-tag>
-        </div>
-
       </div>
-    </div>
 
-    <!-- SYNOPSIS -->
-    <div class="mt-6">
-      <h3 class="text-lg font-semibold mb-2">Synopsis</h3>
-      <p class="text-gray-700 leading-relaxed">
-        {{ l?.synopsis }}
-      </p>
-    </div>
-
-    <!-- ACTIONS -->
-    <div class="mt-6 flex items-center gap-3">
-
-      @if (l?.etat?.libelle !== 'INUTILISABLE') {
-        <button
-          pButton
-          type="button"
-          class="p-button-success"
-          (click)="onReservation()"
-        >
-          <span pButtonLabel>Réserver</span>
-        </button>
-      } @else {
-        <p class="text-red-500 font-medium">
-          Livre indisponible
+      <!-- SYNOPSIS -->
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-2">Synopsis</h3>
+        <p class="text-gray-700 leading-relaxed">
+          {{ l?.synopsis }}
         </p>
-      }
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="mt-6 flex items-center gap-3">
+
+        @if (cleCodeEtat !== codeEtat.INUTILISABLE && !dejaReserve()) {
+          <button
+            pButton
+            type="button"
+            class="p-button-success"
+            (click)="onReservation()"
+          >
+            <span pButtonLabel>Réserver</span>
+          </button>
+        } @else if (dejaReserve()) {
+          <button
+            pButton
+            type="button"
+            class="p-button-info"
+            (click)="onSeRetirer()"
+            disabled
+          >
+            <span pButtonLabel>Déjà réservé</span>
+          </button>
+        } @else {
+          <p class="text-red-500 font-medium">
+            Livre indisponible
+          </p>
+        }
+
+        @if (roleUtilisateur() == 'BIBLIOTHECAIRE') {
+          <button
+            pButton
+            type="button"
+            class="p-button-info"
+            [routerLink]="['/livres/modifier', idLivre]"
+          >Modifier
+          </button>
+
+          <button
+            pButton
+            type="button"
+            class="p-button-danger"
+            (click)="onDelete()"
+          >Supprimer
+          </button>
+        }
 
     </div>
 
-  </p-card>
+    </p-card>
 
-</div>
+  </div>
+
+} @else {
+  <p-message>Le livre que vous avez demandé n'existe pas</p-message>
+}

@@ -2,7 +2,6 @@ import {Component, signal, WritableSignal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MultiSelect} from 'primeng/multiselect';
 import {FloatLabel} from 'primeng/floatlabel';
-import {EtatService} from '../../../etat/etat-service';
 import {GenreService} from '../../../genre/genre-service';
 import {Select} from 'primeng/select';
 import {InputText} from 'primeng/inputtext';
@@ -10,8 +9,13 @@ import {Button} from 'primeng/button';
 import {Paginator, PaginatorState} from 'primeng/paginator';
 import {Page} from '../../../type/Page';
 import {AffichageLivres} from './affichage-livres/affichage-livres';
-import {LivreService} from '../livre-service';
+import {LivreService} from '../../../services/livre-service';
 import {LivreView} from '../../../models/livreView';
+import {ProgressSpinner} from 'primeng/progressspinner';
+import {Message} from 'primeng/message';
+import {CodeEtat} from '../../../models/enum/code-etat.enum';
+import {ChoixUtilisateur} from './choix-utilisateur/choix-utilisateur';
+import {UtilisateurService} from '../../../services/utilisateurService';
 
 @Component({
   selector: 'app-catalogue',
@@ -23,7 +27,10 @@ import {LivreView} from '../../../models/livreView';
     InputText,
     Button,
     Paginator,
-    AffichageLivres
+    AffichageLivres,
+    ProgressSpinner,
+    Message,
+    ChoixUtilisateur
   ],
   templateUrl: './catalogue.html',
   styleUrl: './catalogue.css',
@@ -31,20 +38,28 @@ import {LivreView} from '../../../models/livreView';
 export class Catalogue {
   public formgroup: FormGroup;
   public genresOptions: WritableSignal<any[]> = signal([]);
-  public etatsOptions: WritableSignal<any[]> = signal([]);
+  public etatsOptions = Object.entries(CodeEtat).map(
+    ([key, value]) => ({
+      libelleEtat: value,
+      valeurEtat: key
+    })
+  );
 
   public livres: WritableSignal<LivreView[]> = signal([]);
   public page: WritableSignal<Page > = signal({
-          numberOfElements: 20,
+          totalElements: 12,
           pageable: {
             pageNumber: 0,
-            pageSize: 20
+            pageSize: 12
           }
         });
 
-  public constructor(private readonly etatService: EtatService,
-                     private readonly genreService: GenreService,
-                     private readonly livreService: LivreService) {
+  public isLoading: boolean = true;
+
+  public userIdSelected:WritableSignal<number | null> = signal(null);
+
+  public constructor(private readonly genreService: GenreService,
+                     private readonly livreService: LivreService, private readonly utilisateurService: UtilisateurService) {
 
     this.formgroup = new FormGroup({
       saisie: new FormControl<string>(''),
@@ -63,25 +78,19 @@ export class Catalogue {
       },
     });
 
-    this.etatService.getEtats().subscribe({
-      next: (etats) => {
-        this.etatsOptions.set(
-          etats.map(etat => etat.libelle)
-        );
-      },
-    });
+    // On lance la recherche dès l'arrivée sur l'écran
+    this.onSubmit();
   }
 
 
   public onSubmit(): void {
-
     this.livreService.faireRecherche(this.page().pageable.pageNumber, this.page().pageable.pageSize, this.formgroup.value).subscribe({
       next: (response) => {
+        this.isLoading = false;
         this.livres.set(response.content);
-        console.log(this.livres());
 
         const page: Page = {
-          numberOfElements: response.numberOfElements,
+          totalElements: response.totalElements,
           pageable: {
             pageNumber: response.pageable.pageNumber,
             pageSize: response.pageable.pageSize
@@ -94,9 +103,17 @@ export class Catalogue {
 
   public onPageChange(event: PaginatorState): void {
     const newPage: Page = this.page();
-    newPage.pageable.pageNumber = event.first ?? 0;
-    newPage.pageable.pageSize = event.rows ?? 20;
+    newPage.pageable.pageNumber = event.page ?? 0;
+    newPage.pageable.pageSize = event.rows ?? 12;
 
     this.page.set(newPage);
+
+    this.onSubmit();
+  }
+
+  roleUtilisateur() : string|null {
+    return this.utilisateurService.getRole();
   }
 }
+
+

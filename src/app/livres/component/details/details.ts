@@ -1,7 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, computed, Signal} from '@angular/core';
 import {LivreView} from '../../../models/livreView';
-import {ActivatedRoute, Router} from '@angular/router';
-import {LivreService} from '../livre-service';
 import {catchError, Observable, throwError} from 'rxjs';
 import {AsyncPipe, DatePipe} from '@angular/common';
 import {Card} from 'primeng/card';
@@ -9,6 +7,12 @@ import {Tag} from 'primeng/tag';
 import {ButtonDirective, ButtonLabel} from 'primeng/button';
 import {ReservationService} from '../../../reservation/reservation-service';
 import {MessageService} from 'primeng/api';
+import {UtilisateurService} from '../../../services/utilisateurService';
+import {CodeEtat} from '../../../models/enum/code-etat.enum';
+import {CodeEtatPipe} from '../../../pipe/code-etat.pipe';
+import {Message} from 'primeng/message';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {LivreService} from '../../../services/livre-service';
 
 @Component({
   selector: 'app-details',
@@ -18,17 +22,32 @@ import {MessageService} from 'primeng/api';
     DatePipe,
     Tag,
     ButtonDirective,
-    ButtonLabel
+    ButtonLabel,
+    CodeEtatPipe,
+    Message,
+    RouterLink
   ],
   templateUrl: './details.html',
   styleUrl: './details.css',
 })
 export class Details {
   livre$: Observable<LivreView>;
-  idLivre: string;
+  mesReservations: Signal<number[] | null>;
+  dejaReserve;
 
-  constructor(private route: ActivatedRoute, private livreService: LivreService, private reservationService: ReservationService, private messageService: MessageService, private router: Router) {
-    this.idLivre = this.route.snapshot.paramMap.get('id') ?? "0";
+  public readonly codeEtat = CodeEtat;
+
+  idLivre: number;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private livreService: LivreService,
+    private messageService: MessageService,
+    private reservationService: ReservationService,
+    private utilisateurService: UtilisateurService) {
+
+    this.idLivre = parseInt(<string>this.route.snapshot.paramMap.get('id')) ?? "0";
     this.livre$ = this.livreService.getById(this.idLivre).pipe(
       catchError(error => {
         if (error.status) {
@@ -37,24 +56,73 @@ export class Details {
         return throwError(() => error)
       })
     );
+    this.reservationService.chargeMesReservations()
+    this.mesReservations = this.reservationService.mesReservations;
+    this.dejaReserve = computed(() => {
+      return this.mesReservations()?.includes(this.idLivre) ?? false;
+    });
   }
 
   onReservation() {
-    // TODO récupérer l'id de l'utilisateur
-    const myId = 1
-    if (this.reservationService.jeReserve(this.idLivre, myId)) {
+    const myId = this.utilisateurService.getId();
+    if (myId == null) {
       this.messageService.add({
-        severity: 'success',
-        summary: 'Livre réservé',
-        detail: 'Livre réservé, vous avez 14 jours pour venir le chercher.'
+        severity: 'error',
+        summary: 'Une erreur est survenue',
+        detail: 'Si cette erreur persiste, merce de vous reconnecter.'
       })
-      this.router.navigate(['/catalogue']);
-    } else {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Livre réservé',
-        detail: 'Vous êtes désormais sur liste d\'attente.'
-      })
+      return;
+    }
+    this.reservationService.jeReserve(this.idLivre, myId).subscribe({
+      next: (response) => {
+        if (response.status == 201) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Livre réservé',
+            detail: 'Livre réservé, vous recevrez un mail pour venir le chercher.'
+          })
+          this.router.navigate(['/catalogue']);
+        }
+      },
+      error: err => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: err.error.message
+        });
+      }
+    })
+
+    this.reservationService.refreshMesReservations();
+  }
+
+  onSeRetirer() {
+    this.reservationService.refreshMesReservations();
+  }
+
+  roleUtilisateur(): string | null {
+    return this.utilisateurService.getRole();
+  }
+
+  onDelete() {
+    if (this.roleUtilisateur() == 'BIBLIOTHECAIRE') {
+      this.livreService.DeleteByID(this.idLivre).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Livre supprimé',
+            detail: 'Le livre a été supprimé avec succès'
+          });
+          this.router.navigate(['/catalogue']);
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: error.message
+          });
+        }
+      });
     }
   }
 }

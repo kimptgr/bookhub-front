@@ -1,0 +1,14 @@
+.badge {
+  display: inline-block;
+  font-size: medium;
+  font-weight: 600;
+  margin: 0 5px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.disponible   { background: #EAF3DE; color: #27500A; }
+.reserve      { background: #FAEEDA; color: #633806; }
+.emprunte     { background: #FAECE7; color: #712B13; }
+.inutilisable { background: #F1EFE8; color: #444441; }

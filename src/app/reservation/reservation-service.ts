@@ -11,7 +11,7 @@ import {ReservationProfil} from '../models/ReservationProfil';
 })
 export class ReservationService {
   private readonly BASE_URL = environment.base_url;
-  private _mesReservations = signal<number[] | null>(null);
+  private _mesReservations = signal<ReservationDTO[] | null>(null);
   mesReservations = this._mesReservations.asReadonly();
 
   constructor(private http:HttpClient) {
@@ -30,7 +30,7 @@ export class ReservationService {
 
   refreshMesReservations() {
     this.http.get<ReservationDTO[]>(this.BASE_URL+"/reservations/me").pipe(
-      map(resa=> resa.map(r=> r.livreId)),
+      // map(resa=> resa.map(r=> r.livreId)),
       tap(resa=> {
         this._mesReservations.set(resa)
       })
@@ -43,9 +43,14 @@ export class ReservationService {
     );
   }
 
+  jannuleMaReservation(reservationId: number) {
+    return this.http.delete(this.BASE_URL+"/reservations/"+reservationId,  {observe: "response"})
+  }
+
 }
 
 export interface ReservationDTO {
+  id?: number,
   livreId: number,
   reservateurId: number
 }

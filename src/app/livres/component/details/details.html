@@ -13,7 +13,7 @@
         <!-- Image -->
         <img
           [src]="l?.urlImage"
-          onerror="this.src='https://picsum.photos/200'"
+          onerror="this.src='https://picsum.photos/200/300'"
           [alt]="l?.titre"
           class="w-40 h-auto rounded-xl shadow-md object-cover"
         />
@@ -27,7 +27,7 @@
           <!-- Auteurs -->
           <p class="text-sm text-gray-600 mb-1">
             <span class="font-semibold">Auteur(s) :</span>
-            @for (auteur of l?.auteurs; track auteur; let i = $index) {
+            @for (auteur of l?.auteurs; track auteur;) {
               <span>
             {{ auteur.prenom }} {{ auteur.nom }}
                 @if (!$last) {
@@ -50,7 +50,7 @@
 
           <!-- Genres -->
           <div class="flex flex-wrap gap-2 mt-2">
-            @for (genre of l?.genres; track genre; let i = $index) {
+            @for (genre of l?.genres; track genre;) {
               <p-tag
                 [value]="genre.libelle"
                 severity="info"
@@ -102,17 +102,16 @@
             class="p-button-success"
             (click)="onReservation()"
           >
-            <span pButtonLabel>Réserver</span>
+            Réserver
           </button>
         } @else if (dejaReserve()) {
+          <p-confirmpopup></p-confirmpopup>
           <button
             pButton
             type="button"
-            class="p-button-info"
-            (click)="onSeRetirer()"
-            disabled
-          >
-            <span pButtonLabel>Déjà réservé</span>
+            class="p-button-help"
+            (click)="confirmerSeRetirerDeLaListeDAttente($event)"
+          >Annuler ma réservation
           </button>
         } @else {
           <p class="text-red-500 font-medium">
@@ -120,7 +119,7 @@
           </p>
         }
 
-        @if (roleUtilisateur() === 'BIBLIOTHECAIRE') {
+        @if (roleUtilisateur() !== 'UTILISATEUR') {
           <button
             pButton
             type="button"

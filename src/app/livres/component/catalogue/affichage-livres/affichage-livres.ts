@@ -1,11 +1,10 @@
-import {Component, inject, Input, input, InputSignal, output, Signal, WritableSignal} from '@angular/core';
+import {Component, Input, output, WritableSignal} from '@angular/core';
 import {NgClass, TitleCasePipe, UpperCasePipe} from '@angular/common';
 import {LivreView} from '../../../../models/livreView';
 import {CodeEtat} from '../../../../models/enum/code-etat.enum';
 import {CodeEtatPipe} from '../../../../pipe/code-etat.pipe';
 import {Router} from '@angular/router';
 import {Button} from 'primeng/button';
-import {UserDTO} from '../../../../models/userDTO';
 import {MessageService} from 'primeng/api';
 import {ReservationService} from '../../../../reservation/reservation-service';
 import {EmpruntService} from '../../../../services/emprunt.service';

@@ -47,10 +47,10 @@ export class Catalogue {
 
   public livres: WritableSignal<LivreView[]> = signal([]);
   public page: WritableSignal<Page > = signal({
-          totalElements: 20,
+          totalElements: 12,
           pageable: {
             pageNumber: 0,
-            pageSize: 20
+            pageSize: 12
           }
         });
 
@@ -104,7 +104,7 @@ export class Catalogue {
   public onPageChange(event: PaginatorState): void {
     const newPage: Page = this.page();
     newPage.pageable.pageNumber = event.page ?? 0;
-    newPage.pageable.pageSize = event.rows ?? 20;
+    newPage.pageable.pageSize = event.rows ?? 12;
 
     this.page.set(newPage);
 

@@ -9,14 +9,13 @@ import {Button} from 'primeng/button';
 import {Paginator, PaginatorState} from 'primeng/paginator';
 import {Page} from '../../../type/Page';
 import {AffichageLivres} from './affichage-livres/affichage-livres';
-import {LivreService} from '../livre-service';
+import {LivreService} from '../../../services/livre-service';
 import {LivreView} from '../../../models/livreView';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {Message} from 'primeng/message';
 import {CodeEtat} from '../../../models/enum/code-etat.enum';
 import {ChoixUtilisateur} from './choix-utilisateur/choix-utilisateur';
 import {UtilisateurService} from '../../../services/utilisateurService';
-import {UserDTO} from '../../../models/userDTO';
 
 @Component({
   selector: 'app-catalogue',
@@ -85,7 +84,6 @@ export class Catalogue {
 
 
   public onSubmit(): void {
-
     this.livreService.faireRecherche(this.page().pageable.pageNumber, this.page().pageable.pageSize, this.formgroup.value).subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -117,3 +115,5 @@ export class Catalogue {
     return this.utilisateurService.getRole();
   }
 }
+
+

@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Livre} from '../../models/livre';
+import {Livre} from '../models/livre';
 import {catchError, map, Observable, throwError} from 'rxjs';
-import {environment} from '../../../environments/environment'
-import {LivreView} from '../../models/livreView';
+import {environment} from '../../environments/environment'
+import {LivreView} from '../models/livreView';
 import {Router} from '@angular/router';
 
 @Injectable({

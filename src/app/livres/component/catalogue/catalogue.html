@@ -47,7 +47,11 @@
     <p-progressSpinner ariaLabel="loading" />
 
   } @else if (livres().length > 0) {
-    <app-affichage-livres [livres]="livres()"  [userIdSignal]="userIdSelected" class="flex flex-wrap gap-6 justify-center px-6 w-full overflow-hidden" />
+    <app-affichage-livres
+      [livres]="livres"
+      [userIdSignal]="userIdSelected"
+      (demandeRefresh)="onSubmit()"
+      class="flex flex-wrap gap-6 justify-center px-6 w-full overflow-hidden" />
   } @else {
     <p-message>Aucun livre ne correspond à vos critères de recherche</p-message>
   }

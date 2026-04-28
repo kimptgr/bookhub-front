@@ -1,7 +1,5 @@
 import {Component, computed, Signal} from '@angular/core';
 import {LivreView} from '../../../models/livreView';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {LivreService} from '../livre-service';
 import {catchError, Observable, throwError} from 'rxjs';
 import {AsyncPipe, DatePipe} from '@angular/common';
 import {Card} from 'primeng/card';
@@ -13,6 +11,8 @@ import {UtilisateurService} from '../../../services/utilisateurService';
 import {CodeEtat} from '../../../models/enum/code-etat.enum';
 import {CodeEtatPipe} from '../../../pipe/code-etat.pipe';
 import {Message} from 'primeng/message';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {LivreService} from '../../../services/livre-service';
 
 @Component({
   selector: 'app-details',
@@ -37,10 +37,7 @@ export class Details {
 
   public readonly codeEtat = CodeEtat;
 
-  // users$: Observable<userDTO>;
   idLivre: number;
-
-  // showReservationDialog: boolean = false;
 
   constructor(
     private route: ActivatedRoute,

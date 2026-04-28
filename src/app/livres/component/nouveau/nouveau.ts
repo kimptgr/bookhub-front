@@ -14,7 +14,7 @@ import {MultiSelect} from 'primeng/multiselect';
 import {DatePicker} from 'primeng/datepicker';
 import {FloatLabel} from 'primeng/floatlabel';
 import {isbnValidator} from './isbn.directive';
-import {LivreService} from '../livre-service';
+import {LivreService} from '../../../services/livre-service';
 import {Textarea} from 'primeng/textarea';
 import {MessageService} from 'primeng/api';
 import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';

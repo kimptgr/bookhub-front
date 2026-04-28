@@ -1,4 +1,4 @@
-import {Component, inject, Input, input, InputSignal, Signal, WritableSignal} from '@angular/core';
+import {Component, inject, Input, input, InputSignal, output, Signal, WritableSignal} from '@angular/core';
 import {NgClass, TitleCasePipe, UpperCasePipe} from '@angular/common';
 import {LivreView} from '../../../../models/livreView';
 import {CodeEtat} from '../../../../models/enum/code-etat.enum';
@@ -28,7 +28,7 @@ export class AffichageLivres {
 
   public readonly codeEtat = CodeEtat;
 
-  public livres: InputSignal<LivreView[]> = input.required();
+  @Input() livres!: WritableSignal<LivreView[]>;
   @Input() userIdSignal!:WritableSignal<number | null>;
 
   public onclick(idLivre: number): void {
@@ -49,6 +49,7 @@ export class AffichageLivres {
             summary: 'Livre réservé',
             detail: 'Livre réservé, vous recevrez un mail pour venir le chercher.'
           })
+          this.refresh()
           this.router.navigate(['/catalogue']);
         }
       },
@@ -76,7 +77,7 @@ export class AffichageLivres {
             severity: 'success',
             summary: 'Emprunt réussi'
           })
-          this.router.navigate(['/catalogue']);
+          this.refresh();
         }
       },
       error: err => {
@@ -91,5 +92,16 @@ export class AffichageLivres {
 
   envoyerMessageErreurSelectionUtilisateur() {
     this.messageService.add({severity: 'error', summary: 'Erreur', detail: 'Merci de sélectionner l\'usager·ère'});
+  }
+
+  rendre(id: number) {
+    //TODO à implémenter
+    this.refresh()
+  }
+
+  demandeRefresh = output<void>();
+
+  refresh() {
+    this.demandeRefresh.emit();
   }
 }

@@ -1,0 +1,119 @@
+<div class="max-w-5xl mx-auto p-6 my-1 bg-white rounded-2xl shadow-lg flex flex-col gap-5">
+
+  <fieldset class="border-b pb-4 flex justify-between items-center">
+    <legend class="text-xl font-semibold text-gray-800">👥 Gestion des utilisateurs</legend>
+    <p-button
+      [label]="modeEditionMasse ? 'Annuler' : 'Modifier les rôles en masse'"
+      [severity]="modeEditionMasse ? 'secondary' : 'primary'"
+      (click)="modeEditionMasse = !modeEditionMasse"
+    />
+  </fieldset>
+
+  <p-table [value]="utilisateurs" [stripedRows]="true">
+    <ng-template #header>
+      <tr>
+        <th class="text-center">Nom</th>
+        <th class="text-center">Prénom</th>
+        <th class="text-center">Email</th>
+        <th class="text-center">Rôle</th>
+        <th class="text-center">Statut</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-u>
+      <tr>
+        <td class="text-center">{{ u.nom }}</td>
+        <td class="text-center">{{ u.prenom }}</td>
+        <td class="text-center">{{ u.email }}</td>
+
+        <!-- Rôle : select en mode masse, texte sinon -->
+        <td class="text-center">
+          @if (modeEditionMasse) {
+            <p-select
+              [(ngModel)]="u.role"
+              [options]="roles"
+              styleClass="w-full"
+            />
+          } @else {
+            {{ u.role }}
+          }
+        </td>
+
+        <!-- Icône verrou -->
+        <td class="text-center">
+          <span [title]="u.desactive ? 'Compte actif' : 'Compte désactivé'">
+            @if (u.desactive) {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                   stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round"
+        d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
+</svg>
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                   stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round"
+        d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
+</svg>
+            }
+          </span>
+        </td>
+
+        <!-- Bouton modification cas par cas -->
+        <td class="text-center">
+          <p-button
+            severity="secondary"
+            [outlined]="true"
+            [disabled]="modeEditionMasse"
+            (click)="utilisateurSelectionne = u; isShow = true"
+          >
+            Modifier
+          </p-button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Bouton sauvegarde masse -->
+  @if (modeEditionMasse) {
+    <div class="flex justify-end pt-4 border-t">
+      <p-button severity="primary" (click)="sauvegarderEnMasse()">
+        💾 Sauvegarder les rôles
+      </p-button>
+    </div>
+  }
+</div>
+
+<!-- Dialog modification cas par cas -->
+<p-dialog [(visible)]="isShow" [modal]="true" [style]="{ width: '30rem' }">
+  <ng-template #header>
+    <span class="font-bold">Modifier {{ utilisateurSelectionne?.prenom }} {{ utilisateurSelectionne?.nom }}</span>
+  </ng-template>
+
+  @if (utilisateurSelectionne) {
+    <div class="flex flex-col gap-4">
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm text-gray-600">Rôle</label>
+        <p-select
+          [(ngModel)]="utilisateurSelectionne.role"
+          [options]="roles"
+          styleClass="w-full"
+          appendTo="body"
+        />
+      </div>
+
+      <div class="flex align-items-center gap-3">
+        <label class="text-sm text-gray-600">Compte verrouillé</label>
+        <p-toggleswitch [(ngModel)]="utilisateurSelectionne.desactive"/>
+      </div>
+
+    </div>
+  }
+
+  <ng-template #footer>
+    <p-button label="Annuler" severity="secondary" (click)="isShow = false"/>
+    <p-button label="Enregistrer" severity="primary"
+              (click)="modifierCasParCas(utilisateurSelectionne!); isShow = false"/>
+  </ng-template>
+</p-dialog>

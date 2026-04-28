@@ -109,8 +109,23 @@ export class Details {
 
   onDelete() {
     if (this.roleUtilisateur() == 'BIBLIOTHECAIRE') {
-      this.livreService.DeleteByID(this.idLivre).subscribe({});
+      this.livreService.DeleteByID(this.idLivre).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Livre supprimé',
+            detail: 'Le livre a été supprimé avec succès'
+          });
+          this.router.navigate(['/catalogue']);
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: error.message
+          });
+        }
+      });
     }
-
   }
 }

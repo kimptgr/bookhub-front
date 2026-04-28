@@ -6,7 +6,9 @@ import { Inscription } from './pages/inscription/inscription';
 import {Details} from './livres/component/details/details';
 import {authenticatedGuard} from './guards/authenticated-guard';
 import {librarianGuard} from './guards/librarian-guard';
+import {adminGuard} from './guards/admin-guard';
 import {Modifier} from './livres/component/modifier/modifier';
+import {DashboardAdmin} from './dash-board-admin/dashboard-admin';
 
 
 export const routes: Routes = [
@@ -14,6 +16,7 @@ export const routes: Routes = [
   { path: 'livres/nouveau', component: Nouveau, canActivate: [authenticatedGuard, librarianGuard] },
   { path: 'livres/modifier/:id', component: Modifier, canActivate: [authenticatedGuard, librarianGuard] },
   { path: 'livres/:id', component: Details, canActivate: [authenticatedGuard] },
+  { path: 'dashboard-admin', component: DashboardAdmin, canActivate: [authenticatedGuard, adminGuard]},
   { path: 'connexion', component: Connexion },
   { path: 'inscription', component: Inscription },
   { path: '**', redirectTo: '' }

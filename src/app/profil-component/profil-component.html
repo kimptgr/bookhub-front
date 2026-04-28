@@ -1,0 +1,167 @@
+<div class="max-w-2xl mx-auto p-6 my-1 bg-white rounded-2xl shadow-lg flex flex-col gap-5">
+
+  <fieldset class="border-b pb-4">
+    <legend class="text-xl font-semibold text-gray-800">👤 Mon profil</legend>
+  </fieldset>
+
+  <!-- Informations profil -->
+  <form [formGroup]="profilForm" (ngSubmit)="sauvegarderProfil()" class="flex flex-col gap-4">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <p-floatlabel variant="on">
+          <input pInputText id="nom" formControlName="nom" class="w-full" [readonly]="!modeEdition" />
+          <label for="nom">Nom</label>
+        </p-floatlabel>
+      </div>
+      <div>
+        <p-floatlabel variant="on">
+          <input pInputText id="prenom" formControlName="prenom" class="w-full" [readonly]="!modeEdition" />
+          <label for="prenom">Prénom</label>
+        </p-floatlabel>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <p-floatlabel variant="on">
+        <input pInputText id="email" type="email" formControlName="email" class="w-full" [readonly]="!modeEdition" />
+        <label for="email">Email</label>
+      </p-floatlabel>
+    </div>
+
+    <!-- Boutons profil -->
+    <div class="flex gap-3 flex-wrap">
+      @if (!modeEdition) {
+        <p-button type="button" severity="secondary" (click)="modeEdition = true">
+          ✏️ Modifier
+        </p-button>
+        <p-button type="button" severity="secondary" (click)="showDialogAncienMdp = true">
+          🔑 Changer le mot de passe
+        </p-button>
+      } @else {
+        <p-button type="submit" severity="primary" [disabled]="profilForm.invalid">
+          💾 Sauvegarder
+        </p-button>
+        <p-button type="button" severity="secondary" (click)="modeEdition = false; chargerProfil()">
+          Annuler
+        </p-button>
+      }
+    </div>
+
+  </form>
+
+  <!-- Onglets réservations / emprunts / historique -->
+  <!-- À compléter quand les features seront prêtes -->
+  <p-tabs>
+    <p-tablist>
+      <p-tab value="reservations">📋 Réservations</p-tab>
+      <p-tab value="emprunts">📖 Emprunts en cours</p-tab>
+      <p-tab value="historique">🕓 Historique</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="reservations">
+        <!-- Tableau : titre, image, position dans la liste d'attente -->
+        <p class="text-gray-500 text-sm">Bientôt disponible</p>
+      </p-tabpanel>
+      <p-tabpanel value="emprunts">
+        <!-- Tableau : titre, image, date retour, icône si en retard -->
+        <p class="text-gray-500 text-sm">Bientôt disponible</p>
+      </p-tabpanel>
+      <p-tabpanel value="historique">
+        <!-- Tableau : titre, image -->
+        <p class="text-gray-500 text-sm">Bientôt disponible</p>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+
+  <!-- Bouton suppression compte -->
+  <div class="flex justify-end pt-4 border-t">
+    <p-button severity="danger" [outlined]="true" (click)="showDialogSuppression = true">
+      🗑️ Supprimer mon compte
+    </p-button>
+  </div>
+
+</div>
+
+<!-- Dialog : ancien mot de passe -->
+<p-dialog [(visible)]="showDialogAncienMdp" [modal]="true" [style]="{ width: '25rem' }">
+  <ng-template #header>
+    <span class="font-bold">🔑 Vérification du mot de passe</span>
+  </ng-template>
+
+  <div class="flex flex-col gap-3">
+    <p-floatlabel variant="on">
+      <p-password
+        id="ancienMdp"
+        [formControl]="$any(ancienMdpForm.get('ancienMotDePasse'))"
+        [feedback]="false"
+        [toggleMask]="true"
+        styleClass="w-full"
+        inputStyleClass="w-full" />
+      <label for="ancienMdp">Ancien mot de passe</label>
+    </p-floatlabel>
+    @if (erreurAncienMdp) {
+      <p-message severity="error" size="small" variant="simple">{{ erreurAncienMdp }}</p-message>
+    }
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Annuler" severity="secondary" (click)="showDialogAncienMdp = false; ancienMdpForm.reset(); erreurAncienMdp = ''" />
+    <p-button label="Valider" severity="primary" (click)="validerAncienMdp()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Dialog : nouveau mot de passe -->
+<p-dialog [(visible)]="showDialogNouveauMdp" [modal]="true" [style]="{ width: '25rem' }">
+  <ng-template #header>
+    <span class="font-bold">🔒 Nouveau mot de passe</span>
+  </ng-template>
+
+  <div class="flex flex-col gap-3">
+    <p-floatlabel variant="on">
+      <p-password
+        id="nouveauMdp"
+        [formControl]="$any(nouveauMdpForm.get('nouveauMotDePasse'))"
+        [feedback]="true"
+        [toggleMask]="true"
+        class="w-full"
+        inputStyleClass="w-full"
+        promptLabel="Entrez un mot de passe"
+        weakLabel="Faible"
+        mediumLabel="Moyen"
+        strongLabel="Fort"
+      />
+      <label for="nouveauMdp">Nouveau mot de passe</label>
+    </p-floatlabel>
+    @if (nouveauMdpForm.get('nouveauMotDePasse')?.invalid && nouveauMdpForm.get('nouveauMotDePasse')?.touched) {
+      <p-message severity="warn" size="small" variant="simple">
+        12 caractères min, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
+      </p-message>
+    }
+    @if (erreurNouveauMdp) {
+      <p-message severity="error" size="small" variant="simple">{{ erreurNouveauMdp }}</p-message>
+    }
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Annuler" severity="secondary" (click)="showDialogNouveauMdp = false; nouveauMdpForm.reset()" />
+    <p-button label="Valider" severity="primary" (click)="validerNouveauMdp()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Dialog : confirmation suppression -->
+<p-dialog [(visible)]="showDialogSuppression" [modal]="true" [style]="{ width: '25rem' }">
+  <ng-template #header>
+    <span class="font-bold text-red-600">⚠️ Supprimer mon compte</span>
+  </ng-template>
+
+  <p class="text-gray-700">
+    Cette action est <strong>irréversible</strong>. Toutes vos données seront définitivement supprimées.
+    Êtes-vous sûr de vouloir continuer ?
+  </p>
+
+  <ng-template #footer>
+    <p-button label="Annuler" severity="secondary" (click)="showDialogSuppression = false" />
+    <p-button label="Supprimer définitivement" severity="danger" (click)="confirmerSuppression()" />
+  </ng-template>
+</p-dialog>

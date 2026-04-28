@@ -17,7 +17,7 @@
           @if (roleUtilisateur() == 'BIBLIOTHECAIRE') {
             <a routerLink="livres/nouveau" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Ajouter un livre</a>
           }
-          <a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a>
+          <a routerLink="/profil" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a>
           <a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Réservations</a>
           @if (roleUtilisateur() == 'ADMINISTRATEUR') {
             <a routerLink="/dashboard-admin" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Dashboard</a>
@@ -54,7 +54,7 @@
 <!--   @if (estBibliothecaire) { -->
         <li><a routerLink="livres/nouveau" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Ajouter un livre</a></li>
 <!--  }   -->
-        <li><a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a></li>
+        <li><a routerLink="/profil" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a></li>
         <li><a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Réservations</a></li>
         <li><a routerLink="/connexion" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300" title="Se déconnecter">Se déconnecter</a></li>
       </ul>

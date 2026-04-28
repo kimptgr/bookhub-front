@@ -9,6 +9,7 @@ import {MessageService} from 'primeng/api';
 import {ReservationService} from '../../../../reservation/reservation-service';
 import {EmpruntService} from '../../../../services/emprunt.service';
 import {UtilisateurService} from '../../../../services/utilisateurService';
+import {UpdateEmpruntDTO} from '../../../../models/UpdateEmpruntDTO';
 
 @Component({
   selector: 'app-affichage-livres',
@@ -34,6 +35,8 @@ export class AffichageLivres {
 
   @Input() livres!: WritableSignal<LivreView[]>;
   @Input() userIdSignal!:WritableSignal<number | null>;
+
+  demandeRefresh = output<void>();
 
   public onclick(idLivre: number): void {
     this.router.navigate(['livres', idLivre]);
@@ -74,9 +77,9 @@ export class AffichageLivres {
       return;
     }
 
-    this.empruntService.envoitEmprunt(idLivre, selected).subscribe({
+    this.empruntService.envoiEmprunt(idLivre, selected).subscribe({
       next: (response) => {
-        if (response.status == 201) {
+        if (response.status === 201) {
           this.messageService.add({
             severity: 'success',
             summary: 'Emprunt réussi'
@@ -98,12 +101,33 @@ export class AffichageLivres {
     this.messageService.add({severity: 'error', summary: 'Erreur', detail: 'Merci de sélectionner l\'usager·ère'});
   }
 
-  rendre(id: number) {
-    //TODO à implémenter
-    this.refresh()
-  }
+  public rendreLivre(livre: LivreView): void {
+    const userId = this.utilisateurService.getId();
 
-  demandeRefresh = output<void>();
+    if (!userId) {
+        this.messageService.add({severity: 'error', summary: 'Erreur', detail: 'Problème de récupération de compte utilisateur, veuillez vous reconnecter'});
+        return;
+    }
+
+    const updateEmpruntDTO: UpdateEmpruntDTO = {
+      idLivre: livre.id,
+      idEmprunt: livre.idEmpruntActif,
+      idEmprunteur: livre.idEmprunteur,
+      dateRetour: new Date()
+    };
+
+    this.empruntService.rendreLivre(updateEmpruntDTO).subscribe({
+      next: (response) => {
+        if (response.status === 200) {
+          this.messageService.add({severity: 'success', summary: 'Livre rendu', detail: 'Le retour du livre à été enregistré avec succès'});
+          this.refresh();
+        }
+      },
+      error: (err) => {
+        this.messageService.add({severity: 'error', summary: 'Erreur', detail: "Problème lors de l'enregistrement du retour du livre, veuillez vous reconnecter et réessayer"});
+      }
+    });
+  }
 
   refresh() {
     this.demandeRefresh.emit();

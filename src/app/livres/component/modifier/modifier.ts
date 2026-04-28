@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {LivreService} from '../livre-service';
 import {GenreService} from '../../../genre/genre-service';
 import {EtatService} from '../../../etat/etat-service';
 import {MessageService} from 'primeng/api';
@@ -22,6 +21,8 @@ import {Dialog} from 'primeng/dialog';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {isbnValidator} from '../nouveau/isbn.directive';
 import {OpenlibrairyService} from '../../../clients/openlibrairy/openlibrairy.service';
+import {LivreView} from '../../../models/livreView';
+import {LivreService} from '../../../services/livre-service';
 
 @Component({
   selector: 'app-modifier',
@@ -86,7 +87,7 @@ export class Modifier implements OnInit {
     });
 
     this.livreService.getById(this.idLivre).subscribe({
-      next: (livre) => {
+      next: (livre:LivreView) => {
         this.auteurs.clear();
         livre.auteurs.forEach(auteur => {
           this.auteurs.push(this.fb.group({
@@ -168,7 +169,7 @@ export class Modifier implements OnInit {
         });
         this.router.navigate(['/livres', this.idLivre]);
       },
-      error: (error) => {
+      error: (error:any) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Erreur',

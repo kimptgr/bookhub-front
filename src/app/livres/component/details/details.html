@@ -120,7 +120,7 @@
           </p>
         }
 
-        @if (roleUtilisateur() == 'BIBLIOTHECAIRE') {
+        @if (roleUtilisateur() === 'BIBLIOTHECAIRE') {
           <button
             pButton
             type="button"
@@ -129,11 +129,12 @@
           >Modifier
           </button>
 
+          <p-confirm-dialog />
           <button
             pButton
             type="button"
             class="p-button-danger"
-            (click)="onDelete()"
+            (click)="onDelete($event)"
           >Supprimer
           </button>
         }

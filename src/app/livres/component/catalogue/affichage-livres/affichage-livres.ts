@@ -9,6 +9,7 @@ import {UserDTO} from '../../../../models/userDTO';
 import {MessageService} from 'primeng/api';
 import {ReservationService} from '../../../../reservation/reservation-service';
 import {EmpruntService} from '../../../../services/emprunt.service';
+import {UtilisateurService} from '../../../../services/utilisateurService';
 
 @Component({
   selector: 'app-affichage-livres',
@@ -23,7 +24,11 @@ import {EmpruntService} from '../../../../services/emprunt.service';
   styleUrl: './affichage-livres.css',
 })
 export class AffichageLivres {
-  constructor(private empruntService: EmpruntService, private messageService: MessageService, private reservationService: ReservationService, private router: Router) {
+  constructor(private empruntService: EmpruntService,
+              private messageService: MessageService,
+              private reservationService: ReservationService,
+              private utilisateurService: UtilisateurService,
+              private router: Router) {
   }
 
   public readonly codeEtat = CodeEtat;
@@ -103,5 +108,9 @@ export class AffichageLivres {
 
   refresh() {
     this.demandeRefresh.emit();
+  }
+
+  roleUtilisateur() : string|null {
+    return this.utilisateurService.getRole();
   }
 }

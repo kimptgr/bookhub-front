@@ -46,6 +46,7 @@
             }
           </div>
         </div>
+        @if (roleUtilisateur() == 'BIBLIOTHECAIRE'|| roleUtilisateur() == 'ADMINISTRATEUR') {
         <div class="flex justify-end gap-3 p-2 border-t">
           <p-button
             class="shadow-sm"
@@ -73,6 +74,7 @@
             </p-button>
           }
         </div>
+        }
       </div>
     </div>
   </article>

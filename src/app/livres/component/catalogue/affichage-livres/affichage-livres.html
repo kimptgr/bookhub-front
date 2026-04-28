@@ -46,7 +46,7 @@
             }
           </div>
         </div>
-        @if (roleUtilisateur() == 'BIBLIOTHECAIRE'|| roleUtilisateur() == 'ADMINISTRATEUR') {
+        @if (roleUtilisateur() === 'BIBLIOTHECAIRE'|| roleUtilisateur() === 'ADMINISTRATEUR') {
         <div class="flex justify-end gap-3 p-2 border-t">
           <p-button
             class="shadow-sm"
@@ -56,11 +56,11 @@
             Réservation
           </p-button>
 
-          @if (cleCodeEtat == codeEtat.EMPRUNTE) {
+          @if (cleCodeEtat === codeEtat.EMPRUNTE) {
           <p-button
             class="shadow-sm"
             severity="help"
-            (click)="rendre(livre.id); $event.stopPropagation()">
+            (click)="rendreLivre(livre); $event.stopPropagation()">
             Retour
           </p-button>
         } @else {
@@ -68,7 +68,7 @@
             <p-button
               class="shadow-sm"
               severity="primary"
-              [disabled]="cleCodeEtat == codeEtat.INUTILISABLE"
+              [disabled]="cleCodeEtat === codeEtat.INUTILISABLE"
               (click)="emprunter(livre.id); $event.stopPropagation()">
               Emprunt
             </p-button>

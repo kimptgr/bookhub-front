@@ -10,6 +10,8 @@ export interface LivreView {
   genres: Genre[];
   etat: Etat;
   synopsis: string;
+  idEmpruntActif: number;
+  idEmprunteur: number;
   urlImage: string;
   dateDeParution: string;
 }

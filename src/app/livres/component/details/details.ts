@@ -6,13 +6,14 @@ import {Card} from 'primeng/card';
 import {Tag} from 'primeng/tag';
 import {ButtonDirective, ButtonLabel} from 'primeng/button';
 import {ReservationService} from '../../../reservation/reservation-service';
-import {MessageService} from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
 import {UtilisateurService} from '../../../services/utilisateurService';
 import {CodeEtat} from '../../../models/enum/code-etat.enum';
 import {CodeEtatPipe} from '../../../pipe/code-etat.pipe';
 import {Message} from 'primeng/message';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {LivreService} from '../../../services/livre-service';
+import {ConfirmDialog} from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-details',
@@ -25,7 +26,8 @@ import {LivreService} from '../../../services/livre-service';
     ButtonLabel,
     CodeEtatPipe,
     Message,
-    RouterLink
+    RouterLink,
+    ConfirmDialog
   ],
   templateUrl: './details.html',
   styleUrl: './details.css',
@@ -42,6 +44,7 @@ export class Details {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private confirmationService: ConfirmationService,
     private livreService: LivreService,
     private messageService: MessageService,
     private reservationService: ReservationService,
@@ -104,22 +107,42 @@ export class Details {
     return this.utilisateurService.getRole();
   }
 
-  onDelete() {
-    if (this.roleUtilisateur() == 'BIBLIOTHECAIRE') {
-      this.livreService.DeleteByID(this.idLivre).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Livre supprimé',
-            detail: 'Le livre a été supprimé avec succès'
-          });
-          this.router.navigate(['/catalogue']);
+  public onDelete(event: Event): void {
+    if (this.roleUtilisateur() === 'BIBLIOTHECAIRE') {
+
+      this.confirmationService.confirm({
+        target: event.target as EventTarget,
+        message: 'Voulez-vous supprimer ce livre ?<br>Les réservations associées seront annulées.',
+        header: 'Suppression d\'un livre',
+        icon: 'pi pi-trash',
+        rejectLabel: 'Annuler',
+        rejectButtonProps: {
+          label: 'Annuler',
+          severity: 'secondary',
+          outlined: true
         },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erreur',
-            detail: error.message
+        acceptButtonProps: {
+          label: 'Supprimer',
+          severity: 'danger'
+        },
+
+        accept: () => {
+          this.livreService.DeleteByID(this.idLivre).subscribe({
+            next: () => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Livre supprimé',
+                detail: 'Le livre a été supprimé avec succès'
+              });
+              this.router.navigate(['/catalogue']);
+            },
+            error: (error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Erreur',
+                detail: error.message
+              });
+            }
           });
         }
       });

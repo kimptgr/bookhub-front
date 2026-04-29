@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, signal, WritableSignal} from '@angular/core';
 // importe FormBuilder : pour créer un formulaire réactif, Validators : permet d'utiliser des validateurs existants,
 // ReactiveFormsModule : pour que le formulaire soit réactifs dans le HTML
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -20,7 +20,7 @@ import {Message} from 'primeng/message';
 })
 export class Connexion {
   form: FormGroup;
-  erreur: string = '';
+  erreur: WritableSignal<string> = signal('');
   private returnUrl: string = '/catalogue';
 
 
@@ -46,7 +46,7 @@ export class Connexion {
 
     this.authService.connexion(this.form.value).subscribe({
       next: () => this.router.navigateByUrl(this.returnUrl),
-      error: () => this.erreur = 'Email ou mot de passe incorrect'
+      error: () => this.erreur.set('Email ou mot de passe incorrect')
     });
   }
 }

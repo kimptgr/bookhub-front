@@ -23,5 +23,5 @@ export const routes: Routes = [
   { path: 'dashboard-admin', component: DashboardAdmin, canActivate: [authenticatedGuard, adminGuard]},
   { path: 'connexion', component: Connexion },
   { path: 'inscription', component: Inscription },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: 'catalogue' }
 ];

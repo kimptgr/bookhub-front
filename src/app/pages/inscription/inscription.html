@@ -83,29 +83,37 @@
       </div>
 
       <!-- Mot de passe -->
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-4">
 
+        <p-message severity="info" size="small">
+          <div>Pour votre mot de passe, nous vous demandons au moins :</div>
+          <ul class="mx-8 my-2 list-disc gap-1">
+            <li>12 caractères min</li>
+            <li>1 majuscule</li>
+            <li>1 minuscule</li>
+            <li>1 chiffre</li>
+            <li>1 caractère spécial</li>
+          </ul>
+        </p-message>
+
+        <p-float-label variant="on">
           <p-password
             id="password"
             formControlName="password"
             [toggleMask]="true"
-            [feedback]="true"
+            [feedback]="false"
+            variant="filled"
             class="w-full"
             inputStyleClass="w-full"
-            [invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+            [invalid]="form.get('password')?.invalid"
             promptLabel="Entrez un mot de passe"
             weakLabel="Faible"
             mediumLabel="Moyen"
             strongLabel="Fort"
           />
           <label for="password">Mot de passe</label>
+        </p-float-label>
 
-
-        @if (form.get('password')?.invalid && form.get('password')?.touched) {
-          <p-message severity="warn" size="small" variant="simple" >
-            12 caractères min, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
-          </p-message>
-        }
       </div>
 
       <!-- Erreur globale -->

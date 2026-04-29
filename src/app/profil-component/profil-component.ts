@@ -75,7 +75,7 @@ export class ProfilComponent implements OnInit {
       nom: ['', Validators.required],
       prenom: [''],
       email: ['', [Validators.required, Validators.email]],
-      telephone: ['', [Validators.pattern(/^(0|\+33[ .-]?0?)[1-9]([ .-]?\d{2}){4}$/)]],
+      telephone: ['', [Validators.pattern(/^(0|\+33[ .-]?0?)\d([ .-]?\d{2}){4}$/)]],
 
     });
 

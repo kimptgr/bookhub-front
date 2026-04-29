@@ -3,7 +3,6 @@ import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MultiSelect} from 'primeng/multiselect';
 import {FloatLabel} from 'primeng/floatlabel';
 import {GenreService} from '../../../genre/genre-service';
-import {Select} from 'primeng/select';
 import {InputText} from 'primeng/inputtext';
 import {Button} from 'primeng/button';
 import {Paginator, PaginatorState} from 'primeng/paginator';
@@ -23,7 +22,6 @@ import {UtilisateurService} from '../../../services/utilisateurService';
     ReactiveFormsModule,
     MultiSelect,
     FloatLabel,
-    Select,
     InputText,
     Button,
     Paginator,
@@ -38,12 +36,7 @@ import {UtilisateurService} from '../../../services/utilisateurService';
 export class Catalogue {
   public formgroup: FormGroup;
   public genresOptions: WritableSignal<any[]> = signal([]);
-  public etatsOptions = Object.entries(CodeEtat).map(
-    ([key, value]) => ({
-      libelleEtat: value,
-      valeurEtat: key
-    })
-  );
+  public etatsOptions: any[];
 
   public livres: WritableSignal<LivreView[]> = signal([]);
   public page: WritableSignal<Page > = signal({
@@ -64,7 +57,7 @@ export class Catalogue {
     this.formgroup = new FormGroup({
       saisie: new FormControl<string>(''),
       genres: new FormControl<string>(''),
-      disponibilite: new FormControl<string>('')
+      disponibilites: new FormControl<string>('')
     });
 
     this.genreService.getGenres().subscribe({
@@ -77,6 +70,19 @@ export class Catalogue {
         );
       },
     });
+
+    this.etatsOptions = Object.entries(CodeEtat).map(
+      ([key, value]) => ({
+        libelleEtat: value,
+        valeurEtat: key
+      })
+    );
+
+    // On retire l'état "INUTILISABLE" pour les utilisateurs
+    if (this.utilisateurService.getRole() === 'UTILISATEUR') {
+      this.etatsOptions = this.etatsOptions
+        .filter(entry => entry.libelleEtat !== CodeEtat.INUTILISABLE);
+    }
 
     // On lance la recherche dès l'arrivée sur l'écran
     this.onSubmit();

@@ -74,7 +74,9 @@ export class ProfilComponent implements OnInit {
     this.profilForm = this.fb.group({
       nom: ['', Validators.required],
       prenom: [''],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
+      telephone: ['', [Validators.pattern(/^(0|\+33[ .-]?0?)[1-9]([ .-]?\d{2}){4}$/)]],
+
     });
 
     // Formulaire ancien mot de passe

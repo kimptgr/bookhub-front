@@ -10,23 +10,39 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div class="flex flex-col gap-1">
         <p-floatlabel variant="on">
-          <input pInputText id="nom" formControlName="nom" class="w-full" [readonly]="!modeEdition" />
+          <input pInputText id="nom" formControlName="nom" class="w-full" [readonly]="!modeEdition"/>
           <label for="nom">Nom</label>
         </p-floatlabel>
       </div>
       <div>
         <p-floatlabel variant="on">
-          <input pInputText id="prenom" formControlName="prenom" class="w-full" [readonly]="!modeEdition" />
+          <input pInputText id="prenom" formControlName="prenom" class="w-full" [readonly]="!modeEdition"/>
           <label for="prenom">Prénom</label>
         </p-floatlabel>
       </div>
     </div>
 
-    <div class="flex flex-col gap-1">
-      <p-floatlabel variant="on">
-        <input pInputText id="email" type="email" formControlName="email" class="w-full" [readonly]="!modeEdition" />
-        <label for="email">Email</label>
-      </p-floatlabel>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <p-floatlabel variant="on">
+          <input pInputText id="email" type="email" formControlName="email" class="w-full" [readonly]="!modeEdition"/>
+          <label for="email">Email</label>
+        </p-floatlabel>
+      </div>
+      <div class="flex flex-col gap-1">
+        <p-floatlabel variant="on">
+          <input pInputText id="telephone" type="tel" formControlName="telephone" class="w-full" [readonly]="!modeEdition"
+                 [invalid]="profilForm.get('telephone')?.invalid && profilForm.get('telephone')?.touched"
+          />
+          <label for="telephone">Téléphone</label>
+        </p-floatlabel>
+
+        @if (profilForm.get('telephone')?.invalid && profilForm.get('telephone')?.touched) {
+          <p-message severity="error" size="small" variant="simple">
+            Numéro de téléphone invalide
+          </p-message>
+        }
+      </div>
     </div>
 
     <!-- Boutons profil -->
@@ -74,7 +90,7 @@
               <td>
                 <img [src]="r.urlImageLivre" [alt]="r.titreLivre"
                      onerror="this.src='https://picsum.photos/50/70'"
-                     class="w-10 h-14 object-cover rounded" />
+                     class="w-10 h-14 object-cover rounded"/>
               </td>
               <td>{{ r.titreLivre }}</td>
               <td>{{ r.rang }}</td>
@@ -87,7 +103,9 @@
             </tr>
           </ng-template>
           <ng-template #emptymessage>
-            <tr><td colspan="4" class="text-center text-gray-500">Aucune réservation en cours</td></tr>
+            <tr>
+              <td colspan="4" class="text-center text-gray-500">Aucune réservation en cours</td>
+            </tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
@@ -106,21 +124,23 @@
               <td>
                 <img [src]="e.urlImageLivre" [alt]="e.titreLivre"
                      (error)="onImageError($event)"
-                     class="w-10 h-14 object-cover rounded" />
+                     class="w-10 h-14 object-cover rounded"/>
               </td>
               <td>{{ e.titreLivre }}</td>
               <td>{{ e.dateRetourPrevisionnel | date:'dd/MM/yyyy' }}</td>
               <td>
                 @if (e.enRetard) {
-                  <p-tag value="⚠️ En retard" severity="danger" />
+                  <p-tag value="⚠️ En retard" severity="danger"/>
                 } @else {
-                  <p-tag value="En cours" severity="success" />
+                  <p-tag value="En cours" severity="success"/>
                 }
               </td>
             </tr>
           </ng-template>
           <ng-template #emptymessage>
-            <tr><td colspan="4" class="text-center text-gray-500">Aucun emprunt en cours</td></tr>
+            <tr>
+              <td colspan="4" class="text-center text-gray-500">Aucun emprunt en cours</td>
+            </tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
@@ -139,7 +159,7 @@
               <td>
                 <img [src]="h.urlImageLivre" [alt]="h.titreLivre"
                      onerror="this.src='https://picsum.photos/50/70'"
-                     class="w-10 h-14 object-cover rounded" />
+                     class="w-10 h-14 object-cover rounded"/>
               </td>
               <td>{{ h.titreLivre }}</td>
               <td>{{ h.dateEmprunt | date:'dd/MM/yyyy' }}</td>
@@ -147,7 +167,9 @@
             </tr>
           </ng-template>
           <ng-template #emptymessage>
-            <tr><td colspan="4" class="text-center text-gray-500">Aucun emprunt dans l'historique</td></tr>
+            <tr>
+              <td colspan="4" class="text-center text-gray-500">Aucun emprunt dans l'historique</td>
+            </tr>
           </ng-template>
         </p-table>
       </p-tabpanel>
@@ -177,7 +199,7 @@
         [feedback]="false"
         [toggleMask]="true"
         styleClass="w-full"
-        inputStyleClass="w-full" />
+        inputStyleClass="w-full"/>
       <label for="ancienMdp">Ancien mot de passe</label>
     </p-floatlabel>
     @if (erreurAncienMdp) {
@@ -186,8 +208,9 @@
   </div>
 
   <ng-template #footer>
-    <p-button label="Annuler" severity="secondary" (click)="showDialogAncienMdp = false; ancienMdpForm.reset(); erreurAncienMdp = ''" />
-    <p-button label="Valider" severity="primary" (click)="validerAncienMdp()" />
+    <p-button label="Annuler" severity="secondary"
+              (click)="showDialogAncienMdp = false; ancienMdpForm.reset(); erreurAncienMdp = ''"/>
+    <p-button label="Valider" severity="primary" (click)="validerAncienMdp()"/>
   </ng-template>
 </p-dialog>
 
@@ -224,8 +247,8 @@
   </div>
 
   <ng-template #footer>
-    <p-button label="Annuler" severity="secondary" (click)="showDialogNouveauMdp = false; nouveauMdpForm.reset()" />
-    <p-button label="Valider" severity="primary" (click)="validerNouveauMdp()" />
+    <p-button label="Annuler" severity="secondary" (click)="showDialogNouveauMdp = false; nouveauMdpForm.reset()"/>
+    <p-button label="Valider" severity="primary" (click)="validerNouveauMdp()"/>
   </ng-template>
 </p-dialog>
 
@@ -241,7 +264,7 @@
   </p>
 
   <ng-template #footer>
-    <p-button label="Annuler" severity="secondary" (click)="showDialogSuppression = false" />
-    <p-button label="Supprimer définitivement" severity="danger" (click)="confirmerSuppression()" />
+    <p-button label="Annuler" severity="secondary" (click)="showDialogSuppression = false"/>
+    <p-button label="Supprimer définitivement" severity="danger" (click)="confirmerSuppression()"/>
   </ng-template>
 </p-dialog>

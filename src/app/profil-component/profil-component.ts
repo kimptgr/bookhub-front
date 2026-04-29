@@ -14,12 +14,19 @@ import {ProfilService} from '../services/profil-service';
 import {AuthService} from '../services/authService';
 import {Router} from '@angular/router';
 import {MessageService} from 'primeng/api';
+import {ReservationProfil} from '../models/ReservationProfil';
+import {EmpruntEnCours} from '../models/EmpruntEnCours';
+import {EmpruntHistorique} from '../models/EmpruntHistorique';
+import {TableModule} from 'primeng/table';
+import {Tag} from 'primeng/tag';
+import {ReservationService} from '../reservation/reservation-service';
+import {EmpruntService} from '../services/emprunt.service';
 
 @Component({
   selector: 'app-profil-component',
   imports: [ReactiveFormsModule, FormsModule, CommonModule,
     FloatLabel, InputText, Password, Button, Message,
-    Dialog, TabsModule],
+    Dialog, TabsModule, TableModule, Tag],
   templateUrl: './profil-component.html',
   styleUrl: './profil-component.css',
 })
@@ -45,14 +52,22 @@ export class ProfilComponent implements OnInit {
   erreurAncienMdp: string = '';
   erreurNouveauMdp: string = '';
 
+  // tableau de données pour les 3 onglets
+  reservations: ReservationProfil[] = [];
+  empruntsEnCours: EmpruntEnCours[] = [];
+  historique: EmpruntHistorique[] = [];
+
   constructor(
     private fb: FormBuilder,
     private profilService: ProfilService,
     private authService: AuthService,
     private router: Router,
     private messageService: MessageService,
-    private cdr : ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private reservationService: ReservationService,
+    private empruntService: EmpruntService
+  ) {
+  }
 
   ngOnInit() {
     // Formulaire modification profil
@@ -75,6 +90,11 @@ export class ProfilComponent implements OnInit {
     });
 
     this.chargerProfil();
+
+//  permet de charger les 3 pages réservations et emprunts
+    this.chargerReservations();
+    this.chargerEmprunts();
+    this.chargerHistorique();
   }
 
   chargerProfil() {
@@ -96,7 +116,7 @@ export class ProfilComponent implements OnInit {
       next: () => {
         this.modeEdition = false;
         this.chargerProfil(); // recharge pour afficher les nouvelles données
-        this.messageService.add({ severity: 'success', summary: 'Profil mis à jour' });
+        this.messageService.add({severity: 'success', summary: 'Profil mis à jour'});
         this.cdr.detectChanges();
       },
       error: () => this.messageService.add({
@@ -135,7 +155,7 @@ export class ProfilComponent implements OnInit {
         this.showDialogNouveauMdp = false;
         this.ancienMdpForm.reset();
         this.nouveauMdpForm.reset();
-        this.messageService.add({ severity: 'success', summary: 'Mot de passe modifié' });
+        this.messageService.add({severity: 'success', summary: 'Mot de passe modifié'});
         this.cdr.detectChanges();
       },
       error: () => this.erreurNouveauMdp = 'Une erreur est survenue'
@@ -154,4 +174,40 @@ export class ProfilComponent implements OnInit {
       })
     });
   }
+
+  chargerReservations() {
+    this.reservationService.getReservationsProfil().subscribe({
+      next: (data: ReservationProfil[]) => {
+        this.reservations = data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  chargerEmprunts() {
+    this.empruntService.getEmpruntsEnCours().subscribe({
+      next: (data: EmpruntEnCours[]) => {
+        this.empruntsEnCours = data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  chargerHistorique() {
+    this.empruntService.getHistorique().subscribe({
+      next: (data: EmpruntHistorique[]) => {
+        this.historique = data;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  protected onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = 'https://picsum.photos/50/70';
+  }
+
+  getStatutLabel(rang: number): string {
+    return rang === 1 ? 'En attente de retrait' : 'En attente';
+  }
+
 }

@@ -3,7 +3,8 @@ import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Reservation} from '../models/reservation';
 import {tap} from 'rxjs/operators';
-import {map} from 'rxjs';
+import {map, Observable} from 'rxjs';
+import {ReservationProfil} from '../models/ReservationProfil';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +35,12 @@ export class ReservationService {
         this._mesReservations.set(resa)
       })
     ).subscribe();
+  }
 
+  getReservationsProfil(): Observable<ReservationProfil[]> {
+    return this.http.get<ReservationProfil[]>(
+      `${this.BASE_URL}/reservations/me/profil`
+    );
   }
 
 }

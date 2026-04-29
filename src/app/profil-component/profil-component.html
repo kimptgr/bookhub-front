@@ -79,10 +79,11 @@
         <p-table [value]="reservations" [stripedRows]="true">
           <ng-template #header>
             <tr>
-              <th>Couverture</th>
-              <th>Titre</th>
-              <th>Position</th>
-              <th>Statut</th>
+              <th style="text-align :center">Couverture</th>
+              <th style="text-align :center">Titre</th>
+              <th style="text-align :center">Position</th>
+              <th style="text-align :center">Statut</th>
+              <th style="text-align :center">Annuler</th>
             </tr>
           </ng-template>
           <ng-template #body let-r>
@@ -96,9 +97,16 @@
               <td>{{ r.rang }}</td>
               <td>
                 <p-tag
-                  [value]="getStatutLabel(r.rang)"
-                  [severity]="r.rang === 1 ? 'success' : 'info'"
+                  [value]="getStatutLabel(r.disponible)"
+                  [severity]="r.disponible ? 'success' : 'info'"
                 />
+              </td>
+              <td>
+                <p-button
+                  severity="danger"
+                  label="Annuler"
+                  (click)="confirmerAnnulation(r, $event)"
+                ></p-button>
               </td>
             </tr>
           </ng-template>
@@ -268,3 +276,5 @@
     <p-button label="Supprimer définitivement" severity="danger" (click)="confirmerSuppression()"/>
   </ng-template>
 </p-dialog>
+
+<p-confirmpopup></p-confirmpopup>

@@ -14,13 +14,12 @@
         @if (estConnecte()) {
         <div class="hidden md:flex items-center space-x-1">
           <a routerLink="/catalogue" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Catalogue</a>
-          @if (roleUtilisateur() == 'BIBLIOTHECAIRE') {
+          @if (roleUtilisateur() != 'UTILISATEUR') {
             <a routerLink="livres/nouveau" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Ajouter un livre</a>
           }
           <a routerLink="/profil" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Profil</a>
-          <a routerLink="/" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Réservations</a>
           @if (roleUtilisateur() == 'ADMINISTRATEUR') {
-            <a routerLink="/dashboard-admin" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Dashboard</a>
+            <a routerLink="/dashboard-admin" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300">Gestion Utilisateur</a>
           }
           <a routerLink="/connexion" class="py-4 px-3 text-gray-800 hover:text-blue-500 transition duration-300" (click)="deconnexion()" title="Se déconnecter">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

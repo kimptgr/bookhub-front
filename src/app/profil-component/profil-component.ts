@@ -13,7 +13,7 @@ import {Profil} from '../models/Profil';
 import {ProfilService} from '../services/profil-service';
 import {AuthService} from '../services/authService';
 import {Router} from '@angular/router';
-import {MessageService} from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
 import {ReservationProfil} from '../models/ReservationProfil';
 import {EmpruntEnCours} from '../models/EmpruntEnCours';
 import {EmpruntHistorique} from '../models/EmpruntHistorique';
@@ -21,12 +21,13 @@ import {TableModule} from 'primeng/table';
 import {Tag} from 'primeng/tag';
 import {ReservationService} from '../reservation/reservation-service';
 import {EmpruntService} from '../services/emprunt.service';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
 
 @Component({
   selector: 'app-profil-component',
   imports: [ReactiveFormsModule, FormsModule, CommonModule,
     FloatLabel, InputText, Password, Button, Message,
-    Dialog, TabsModule, TableModule, Tag],
+    Dialog, TabsModule, TableModule, Tag, ConfirmPopupModule],
   templateUrl: './profil-component.html',
   styleUrl: './profil-component.css',
 })
@@ -65,7 +66,8 @@ export class ProfilComponent implements OnInit {
     private messageService: MessageService,
     private cdr: ChangeDetectorRef,
     private reservationService: ReservationService,
-    private empruntService: EmpruntService
+    private empruntService: EmpruntService,
+    private confirmationService: ConfirmationService,
   ) {
   }
 
@@ -208,8 +210,45 @@ export class ProfilComponent implements OnInit {
     (event.target as HTMLImageElement).src = 'https://picsum.photos/50/70';
   }
 
-  getStatutLabel(rang: number): string {
-    return rang === 1 ? 'En attente de retrait' : 'En attente';
+  getStatutLabel(disponible: boolean): string {
+    return disponible
+      ? 'À venir Chercher'
+      : "Sur liste d'attente";
   }
+
+  protected confirmerAnnulation(reservation: ReservationProfil, event: Event) {
+
+    this.confirmationService.confirm({
+      target: event.currentTarget as EventTarget,
+      message: 'Annuler la réservation ?',
+      icon: 'pi pi-exclamation-triangle',
+
+      acceptLabel: 'Oui',
+      rejectLabel: 'Non',
+
+      accept: () => {
+        this.reservationService.jannuleMaReservation(reservation.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Réservation annulée'
+            });
+
+            // recharge le tableau pour mettre à jour les réservations
+            this.chargerReservations();
+          },
+          error: () => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erreur',
+              detail: 'Impossible d’annuler la réservation'
+            });
+          }
+        });
+      }
+    });
+  }
+
+
 
 }

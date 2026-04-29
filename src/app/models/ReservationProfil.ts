@@ -5,4 +5,5 @@ export interface ReservationProfil {
   rang: number;
   statutLibelle: string;
   dateDisponibilite: string;
+  disponible: boolean;
 }

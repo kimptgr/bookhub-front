@@ -161,7 +161,7 @@ export class Details {
   }
 
   public onDelete(event: Event): void {
-    if (this.roleUtilisateur() === 'BIBLIOTHECAIRE') {
+    if (this.roleUtilisateur() !== 'UTILISATEUR') {
 
       this.confirmationService.confirm({
         target: event.target as EventTarget,

@@ -60,16 +60,96 @@
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="reservations">
-        <!-- Tableau : titre, image, position dans la liste d'attente -->
-        <p class="text-gray-500 text-sm">Bientôt disponible</p>
+        <p-table [value]="reservations" [stripedRows]="true">
+          <ng-template #header>
+            <tr>
+              <th>Couverture</th>
+              <th>Titre</th>
+              <th>Position</th>
+              <th>Statut</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-r>
+            <tr>
+              <td>
+                <img [src]="r.urlImageLivre" [alt]="r.titreLivre"
+                     onerror="this.src='https://picsum.photos/50/70'"
+                     class="w-10 h-14 object-cover rounded" />
+              </td>
+              <td>{{ r.titreLivre }}</td>
+              <td>{{ r.rang }}</td>
+              <td>
+                <p-tag
+                  [value]="getStatutLabel(r.rang)"
+                  [severity]="r.rang === 1 ? 'success' : 'info'"
+                />
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr><td colspan="4" class="text-center text-gray-500">Aucune réservation en cours</td></tr>
+          </ng-template>
+        </p-table>
       </p-tabpanel>
       <p-tabpanel value="emprunts">
-        <!-- Tableau : titre, image, date retour, icône si en retard -->
-        <p class="text-gray-500 text-sm">Bientôt disponible</p>
+        <p-table [value]="empruntsEnCours" [stripedRows]="true">
+          <ng-template #header>
+            <tr>
+              <th>Couverture</th>
+              <th>Titre</th>
+              <th>Retour prévu</th>
+              <th>Statut</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-e>
+            <tr>
+              <td>
+                <img [src]="e.urlImageLivre" [alt]="e.titreLivre"
+                     (error)="onImageError($event)"
+                     class="w-10 h-14 object-cover rounded" />
+              </td>
+              <td>{{ e.titreLivre }}</td>
+              <td>{{ e.dateRetourPrevisionnel | date:'dd/MM/yyyy' }}</td>
+              <td>
+                @if (e.enRetard) {
+                  <p-tag value="⚠️ En retard" severity="danger" />
+                } @else {
+                  <p-tag value="En cours" severity="success" />
+                }
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr><td colspan="4" class="text-center text-gray-500">Aucun emprunt en cours</td></tr>
+          </ng-template>
+        </p-table>
       </p-tabpanel>
       <p-tabpanel value="historique">
-        <!-- Tableau : titre, image -->
-        <p class="text-gray-500 text-sm">Bientôt disponible</p>
+        <p-table [value]="historique" [stripedRows]="true">
+          <ng-template #header>
+            <tr>
+              <th>Couverture</th>
+              <th>Titre</th>
+              <th>Emprunté le</th>
+              <th>Retourné le</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-h>
+            <tr>
+              <td>
+                <img [src]="h.urlImageLivre" [alt]="h.titreLivre"
+                     onerror="this.src='https://picsum.photos/50/70'"
+                     class="w-10 h-14 object-cover rounded" />
+              </td>
+              <td>{{ h.titreLivre }}</td>
+              <td>{{ h.dateEmprunt | date:'dd/MM/yyyy' }}</td>
+              <td>{{ h.dateRetourEffectif | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr><td colspan="4" class="text-center text-gray-500">Aucun emprunt dans l'historique</td></tr>
+          </ng-template>
+        </p-table>
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>

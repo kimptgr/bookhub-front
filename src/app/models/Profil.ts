@@ -3,4 +3,5 @@ export interface Profil {
   nom: string;
   prenom: string;
   email: string;
+  telephone?: string;
 }

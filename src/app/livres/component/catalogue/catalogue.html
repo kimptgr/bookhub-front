@@ -6,7 +6,7 @@
 }
 <form class="flex flex-col items-center gap-6 w-full max-w-4xl mx-auto p-4" [formGroup]="formgroup">
   <p-floatlabel class="w-full">
-    <input pInputText class="w-full" type="text" id="saisie" formControlName="saisie" />
+    <input (keydown.enter)="onSubmit()" pInputText class="w-full" type="text" id="saisie" formControlName="saisie" />
     <label for="saisie">Titre, auteur ou ISBN</label>
   </p-floatlabel>
 
@@ -25,14 +25,13 @@
     </p-floatlabel>
 
     <p-floatlabel class="flex-1 min-w-50">
-      <p-select
-        id="disponibilite"
-        formControlName="disponibilite"
+      <p-multi-select
+        id="disponibilites"
+        formControlName="disponibilites"
+        display="chip"
         [options]="etatsOptions"
         optionLabel="libelleEtat"
         optionValue="valeurEtat"
-        [checkmark]="true"
-        [showClear]="true"
         appendTo="body"
         class="w-full"
       />

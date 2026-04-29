@@ -41,7 +41,7 @@ export class LivreService {
         params: new HttpParams()
           .set('saisie', recherche.saisie)
           .set('genres', recherche.genres)
-          .set('disponibilite', recherche.disponibilite)
+          .set('disponibilites', recherche.disponibilites)
           .set('page', pageIndex)
           .set('size', pageSize)
       }

@@ -36,7 +36,8 @@ export class Inscription {
       // La regex correspond à celle de ton @Pattern côté back
       password: ['', [Validators.required, Validators.pattern(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{12,}$/
-      )]]
+      )]],
+      telephone: ['', [Validators.pattern(/^(0|\+33[ .-]?0?)\d([ .-]?\d{2}){4}$/)]],
     });
   }
 

@@ -4,7 +4,6 @@ import {Livre} from '../models/livre';
 import {catchError, map, Observable, throwError} from 'rxjs';
 import {environment} from '../../environments/environment'
 import {LivreView} from '../models/livreView';
-import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -42,7 +41,7 @@ export class LivreService {
         params: new HttpParams()
           .set('saisie', recherche.saisie)
           .set('genres', recherche.genres)
-          .set('disponibilite', recherche.disponibilite)
+          .set('disponibilites', recherche.disponibilites)
           .set('page', pageIndex)
           .set('size', pageSize)
       }

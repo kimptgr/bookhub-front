@@ -47,9 +47,9 @@
       </div>
 
       <!-- Erreur globale -->
-      @if (erreur) {
+      @if (erreur()) {
         <p-message severity="error" size="small" variant="simple">
-          {{ erreur }}
+          {{ erreur() }}
         </p-message>
       }
 

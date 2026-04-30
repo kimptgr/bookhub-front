@@ -4,4 +4,5 @@ export interface InscriptionDTO {
   prenom?: string;
   email: string;
   password: string;
+  telephone?: string;
 }

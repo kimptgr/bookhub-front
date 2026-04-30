@@ -236,6 +236,7 @@ export class ProfilComponent implements OnInit {
 
             // recharge le tableau pour mettre à jour les réservations
             this.chargerReservations();
+            this.reservationService.refreshMesReservations();
           },
           error: () => {
             this.messageService.add({

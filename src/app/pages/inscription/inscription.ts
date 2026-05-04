@@ -1,5 +1,13 @@
 import {Component} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../services/authService';
 import {CommonModule} from '@angular/common';
@@ -8,6 +16,18 @@ import {InputText} from 'primeng/inputtext';
 import {Message} from 'primeng/message';
 import {Password} from 'primeng/password';
 import {Button} from 'primeng/button';
+
+export const motDePasseIdentiquesValidator: ValidatorFn = (
+  group: AbstractControl
+): ValidationErrors | null => {
+  const password = group.get('password')?.value;
+  const confirm = group.get('confirmPassword')?.value;
+
+  // si les deux champs sont remplis et différents → erreur
+  return password && confirm && password !== confirm
+    ? { motDePasseDifferents: true }
+    : null;
+};
 
 @Component({
   selector: 'app-inscription',
@@ -24,6 +44,7 @@ export class Inscription {
   form: FormGroup;
   erreur: string = '';
 
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -37,7 +58,10 @@ export class Inscription {
       password: ['', [Validators.required, Validators.pattern(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{12,}$/
       )]],
+      confirmPassword: ['', Validators.required],
       telephone: ['', [Validators.pattern(/^(0|\+33[ .-]?0?)\d([ .-]?\d{2}){4}$/)]],
+    },{
+      validators: motDePasseIdentiquesValidator
     });
   }
 

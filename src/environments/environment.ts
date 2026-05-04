@@ -1,4 +1,4 @@
 export const environment = {
-   base_url: 'http://localhost:8081/bookhub-club/api'
+   base_url: 'https://bookhub.osc-fr1.scalingo.io/bookhub-club/api'
 //   TODO: Mettre url de prod
 };
